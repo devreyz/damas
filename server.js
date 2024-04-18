@@ -44,7 +44,7 @@ class App {
           this.conversations[conversationId].push({ sender, content });
 
           // Enviar a mensagem para o destinatário
-          recipientSocket.emit("message", JSON.stringify({ sender, content }));
+          this.io.emit("message", JSON.stringify({ sender, content }));
         }
       });
       socket.on("disconnect", () => {

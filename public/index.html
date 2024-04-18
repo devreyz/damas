@@ -1,53 +1,71 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link
-      rel="icon"
-      type="image/svg+xml"
-      href="/vite.svg" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0" />
-    <title>Jogo de Damas</title>
-    <link rel="stylesheet" href="./assets/css/styles.css" type="text/css" media="all" />
-  </head>
-  <body>
-    <h1 class="text-red-500">Chat Cliente</h1>
-<a href="teste">tteste.html</a>
-    <textarea
-      id="messageInput"
-      rows="4"
-      cols="50"
-      placeholder="Digite sua mensagem..."></textarea>
-    <button onclick="sendMessage()">Enviar</button>
 
-    <script
-      src="/socket.io/socket.io.js"
-      type="text/javascript"
-      charset="utf-8"></script>
-    <script>
-      const socket = io();
+<head>
+  <meta charset="UTF-8" />
+  <link rel='stylesheet'
+    href='https://cdn-uicons.flaticon.com/2.3.0/uicons-regular-straight/css/uicons-regular-straight.css'>
+  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.3.0/uicons-thin-straight/css/uicons-thin-straight.css'>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jogo de Damas</title>
+  <link rel="stylesheet" href="./assets/css/styles.css" type="text/css" media="all" />
+</head>
 
-      function sendMessage() {
-        const messageInput = document.getElementById("messageInput");
-        const message = messageInput.value.trim();
-        if (message !== "") {
-          socket.emit("message", JSON.stringify({
-            "sender": socket.id,
-            "recipient": socket.id,
-            "content": message
-          }))
-          messageInput.value = "";
-        }
+<body>
+
+  <section class="container mx-auto ">
+    <header class="h-16 bg-slate-200 flex items-center px-4 shadow-sm">
+      <h1 class="text-xl font-bold ">New Chat</h1>
+    </header>
+    <ul id="chat-container">
+      <li class="bg-blue-200 max-w-[80%] mx-6 my-3 block rounded-md p-3 ">Texto sudiasdiasgdiuhs fasvshvidu dusuc  udbc usdb9cuh9ucb dsub jjsddfuhfvv9sdsu9sducn sdv dnn 9 uds9usd9udss  </li>
+      <li class="bg-amber-200 z-200 max-w-[80%] mx-6 my-3 block rounded-md p-3 ">Texto</li>
+    </ul>
+    <section class=" fixed w-full px-4 py-3 bottom-0 left-0 bg-slate-200">
+
+      <form class="flex gap-2 mx-auto container" action="">
+        <button type="button" class="w-12 h-12 flex items-center justify-center bg-slate-700 rounded-full"
+          type="submit"><i class="fi fi-ts-smile-beam  text-white text-2xl leading-3"></i></button>
+        <input id="messageInput" type="text" class="flex-1 rounded-md" placeholder="Mensagem" />
+        <button onclick="sendMessage()" class="w-16 h12 bg-slate-700 rounded-md" type="submit"><i
+            class="fi fi-rs-paper-plane flex items-center justify-center text-white text-2xl leading-3"></i></button>
+      </form>
+
+    </section>
+  </section>
+
+
+
+  <script src="/socket.io/socket.io.js" type="text/javascript" charset="utf-8"></script>
+  <script>
+    const socket = io();
+
+    function sendMessage() {
+      const messageInput = document.getElementById("messageInput");
+      const message = messageInput.value.trim();
+      if (message !== "") {
+        socket.emit("message", JSON.stringify({
+          "sender": socket.id,
+          "recipient": socket.id,
+          "content": message
+        }))
+        messageInput.value = "";
       }
+    }
 
-      // Exemplo de recebimento de mensagens do servidor
-      socket.on("message", message => {
-        message = JSON.parse(message)
-        alert("Mensagem recebida do servidor: " + message.content);
-        // Aqui você pode adicionar o código para exibir a mensagem na interface do usuário
-      });
-    </script>
-  </body>
+    const chatContainer = document.getElementById("chat-container")
+    // Exemplo de recebimento de mensagens do servidor
+    socket.on("message", message => {
+      message = JSON.parse(message)
+      const li = document.createElement("li")
+      li.textContent = message.content  
+      chatContainer.appendChild(li)
+      
+     
+      // Aqui você pode adicionar o código para exibir a mensagem na interface do usuário
+    });
+  </script>
+</body>
+
 </html>
