@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/vite.svg" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0" />
+    <title>Jogo de Damas</title>
+    <link rel="stylesheet" href="./assets/css/styles.css" type="text/css" media="all" />
+  </head>
+  <body>
+    <h1 class="text-red-500">Chat Cliente</h1>
+<a href="teste">tteste.html</a>
+    <textarea
+      id="messageInput"
+      rows="4"
+      cols="50"
+      placeholder="Digite sua mensagem..."></textarea>
+    <button onclick="sendMessage()">Enviar</button>
+
+    <script
+      src="/socket.io/socket.io.js"
+      type="text/javascript"
+      charset="utf-8"></script>
+    <script>
+      const socket = io();
+
+      function sendMessage() {
+        const messageInput = document.getElementById("messageInput");
+        const message = messageInput.value.trim();
+        if (message !== "") {
+          socket.emit("message", JSON.stringify({
+            "sender": socket.id,
+            "recipient": socket.id,
+            "content": message
+          }))
+          messageInput.value = "";
+        }
+      }
+
+      // Exemplo de recebimento de mensagens do servidor
+      socket.on("message", message => {
+        message = JSON.parse(message)
+        alert("Mensagem recebida do servidor: " + message.content);
+        // Aqui você pode adicionar o código para exibir a mensagem na interface do usuário
+      });
+    </script>
+  </body>
+</html>
