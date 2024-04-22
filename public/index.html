@@ -1,74 +1,60 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link
-      rel="stylesheet"
-      href="https://cdn-uicons.flaticon.com/2.3.0/uicons-regular-straight/css/uicons-regular-straight.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdn-uicons.flaticon.com/2.3.0/uicons-thin-straight/css/uicons-thin-straight.css" />
-    <link
-      rel="shortcut icon"
-      href="favicon.ico"
-      type="image/x-icon" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0" />
-    <title>Jogo de Damas</title>
-    <link
-      rel="stylesheet"
-      href="./assets/css/styles.css"
-      type="text/css"
-      media="all" />
-  </head>
 
-  <body>
-    <section class="container mx-auto">
-      <header class="h-16 bg-slate-200 flex items-center px-4 shadow-sm">
-        <h1 class="text-xl font-bold">New Chat</h1>
-      </header>
-      <ul id="chat-container">
-        <li class="w-full flex justify-end">
-          <p class="bg-blue-200 max-w-[80%] mx-6 my-3 block rounded-lg p-3">
-            jdjdjd
-          </p>
-        </li>
-        <li class="w-full flex justify-start">
-          <p class="bg-red-200 max-w-[80%] mx-6 my-3 block rounded-lg p-3">
-            jdjdjd
-          </p>
-        </li>
-      </ul>
-      <section class="fixed w-full px-4 py-3 bottom-0 left-0 bg-slate-200">
-        <form
-          class="flex gap-2 mx-auto container"
-          action="">
-          <button
-            type="button"
-            class="w-12 h-12 flex items-center justify-center bg-slate-700 rounded-full">
-            <i class="fi fi-ts-smile-beam text-white text-2xl leading-3"></i>
-          </button>
-          <input
-            id="messageInput"
-            type="text"
-            autocomplete="off"
-            class="flex-1 rounded-full"
-            placeholder="Mensagem" />
-          <button
-            class="w-16 h12 bg-slate-700 rounded-md"
-            type="submit">
-            <i
-              class="fi fi-rs-paper-plane flex items-center justify-center text-white text-2xl leading-3"></i>
-          </button>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jogo de Damas</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body class="min-h-screen pb-12 bg-stone-100">
+  <header class="sticky bg-stone-400/80 backdrop-blur-md top-0 left-0 px-4 py-3 shadow-md">
+    <div class="container mx-auto">
+
+      <h1>Jogo de Damas</h1>
+    </div>
+  </header>
+  <main class="container mx-auto md:grid md:grid-cols-2">
+    <section class="flex justify-center items-center">
+      <img class="max-h-[80vh]" src="assets/img/imagem-damas-01.jpeg" alt="">
+    </section>
+    <section class="info-section px-4 py-3">
+      <div class=" auth-section mb-3">
+        <form method="post" action="/auth/login" class="shadow-md bg-white border p-3 rounded-lg border-stone-500 "
+          id="auth-form">
+          <h2 class="text-slate-800 font-medium text-xl mb-3">Login / Cadastro</h2>
+          <input class="mb-3 rounded-sm" type="text" name="name" placeholder="Nick" required>
+          <input class="mb-3 rounded-sm" type="password" name="password" placeholder="Senha" required>
+          <button class="block border rounded-sm py-1 px-4 bg-amber-900 text-white" type="submit">Entrar</button>
+
         </form>
-      </section>
+      </div>
+      <div class="prose prose-slate ">
+
+        <h2>Informações do Jogo</h2>
+        <p>Bem-vindo ao emocionante mundo do jogo de damas! Prepare-se para desafiar sua mente e testar suas habilidades
+          estratégicas neste clássico jogo de tabuleiro. Em cada movimento, você precisará antecipar os passos do seu
+          oponente,
+          planejar cuidadosamente suas jogadas e aproveitar as oportunidades para capturar as peças adversárias. Com
+          cada
+          partida, você irá aprimorar sua técnica e se tornar um mestre da estratégia. Venha se juntar a nós e mergulhe
+          na
+          emoção do jogo de damas!</p>
+      </div>
+
     </section>
 
-    <script
-      src="/socket.io/socket.io.js"
-      type="text/javascript"
-      charset="utf-8"></script>
-      <script src="js/index.js" type="module" charset="utf-8"></script>
-    </body>
+
+
+  </main>
+
+  <footer class="fixed w-screen bottom-0 bg-gray-800 text-white py-4">
+    <div class="container mx-auto text-center">
+      <p>&copy; 2024 Jogo de Damas. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+</body>
+
 </html>

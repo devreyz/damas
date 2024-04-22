@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.3.0/uicons-regular-straight/css/uicons-regular-straight.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.3.0/uicons-thin-straight/css/uicons-thin-straight.css" />
+    <link
+      rel="shortcut icon"
+      href="favicon.ico"
+      type="image/x-icon" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0" />
+    <title>Jogo de Damas</title>
+    <link
+      rel="stylesheet"
+      href="./assets/css/styles.css"
+      type="text/css"
+      media="all" />
+  </head>
+
+  <body class="">
+    <section class="container mx-auto">
+      <header class="h-16 bg-slate-200 flex items-center px-4 shadow-sm">
+        <h1 class="text-xl font-bold">New Chat</h1>
+      </header>
+      <ul id="chat-container">
+        <li class="w-full flex justify-end">
+          <p class="bg-blue-200 max-w-[80%] mx-6 my-3 block rounded-lg p-3">
+            jdjdjd
+          </p>
+        </li>
+        <li class="w-full flex justify-start">
+          <p class="bg-red-200 max-w-[80%] mx-6 my-3 block rounded-lg p-3">
+            jdjdjd
+          </p>
+        </li>
+      </ul>
+      <section class="fixed w-full px-4 py-3 bottom-0 left-0 bg-slate-200">
+        <form
+          class="flex gap-2 mx-auto container"
+          action="">
+          <button
+            type="button"
+            class="w-12 h-12 flex items-center justify-center bg-slate-700 rounded-full">
+            <i class="fi fi-ts-smile-beam text-white text-2xl leading-3"></i>
+          </button>
+          <input
+            id="messageInput"
+            type="text"
+            autocomplete="off"
+            class="flex-1 rounded-full"
+            placeholder="Mensagem" />
+          <button
+            class="w-16 h12 bg-slate-700 rounded-md"
+            type="submit">
+            <i
+              class="fi fi-rs-paper-plane flex items-center justify-center text-white text-2xl leading-3"></i>
+          </button>
+        </form>
+      </section>
+    </section>
+
+    <script
+      src="/socket.io/socket.io.js"
+      type="text/javascript"
+      charset="utf-8"></script>
+      <script src="js/index.js" type="module" charset="utf-8"></script>
+    </body>
+</html>
