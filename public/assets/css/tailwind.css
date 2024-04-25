@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-canvas {
-  display: block;
-  background: #333;
+
+body{
+  @apply select-none
 }
 
 .success {

@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import { Routes } from "./routes/Routes.js";
 import cookieParser from "cookie-parser";
+import { log } from "console";
 
 // import { Routes } from "./routes/Routes.js";
 global.__dirname = path.resolve();
@@ -28,7 +29,7 @@ class App {
       host: process.env.DB_HOST,
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME
+      database: process.env.DB_NAME,
     });
     // Defina o diretório onde seus arquivos estáticos (CSS, JavaScript, imagens, etc.) estão localizados
     this.app.use(express.static(path.join(__dirname, "public")));
@@ -40,7 +41,7 @@ class App {
   }
   listenServer() {
     this.app.use(express.json());
-    this.conn.connect(err => {
+    this.conn.connect((err) => {
       if (err) throw err;
       this.http.listen(3000, () =>
         console.log("Server is running, in http://localhost:3000/")
@@ -50,11 +51,11 @@ class App {
   }
 
   listenSocket() {
-    this.io.on("connection", socket => {
+    this.io.on("connection", (socket) => {
       const username = socket.handshake.auth.username;
       this.connections[username] = {
         id: socket.id,
-        username: username
+        username: username,
       };
       //console.log(this.connections);
 
@@ -66,14 +67,21 @@ class App {
       this.io.emit("onlineUsers", Object.values(this.connections));
 
       socket.on("game", (data, callback) => {
-        this.io.to(this.connections[data.for].id).emit("letsGo", data, res => {
-          setTimeout(function() {
-            
-          callback({ msg: "Pedido recebido com sucesso", res: res });
-          }, 2000);
-        });
-
-        console.log("Recebido");
+        this.io
+          .to(this.connections[data.for].id)
+          .timeout(5000)
+          .emit("letsGo", data, (err, res) => {
+            if (err) {
+              callback("Tempo esgotado");
+            } else {
+              if (res == true) {
+                callback(data.for + " aceitou o desafio");
+              } else {
+                callback(data.for + " recusou o desafio");
+              }
+              console.log("Consegui " + res);
+            }
+          });
       });
 
       socket.on("disconnect", () => {

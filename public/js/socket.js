@@ -2,7 +2,7 @@ import { addToaster } from "/js/components/Toaster.js";
 
 export class Socket {
   constructor() {
-    this.init = options => io(options);
+    this.init = (options) => io(options);
     this.io = null;
   }
 }
@@ -15,21 +15,21 @@ export class SocketEvents {
   }
   connect() {
     const showStateElem = document.getElementById("show-connect-socket");
-    this.io.on("connect", socket => {
+    this.io.on("connect", (socket) => {
       showStateElem.innerHTML = '<i class="fi fi-br-wifi text-green-500"></i>';
 
       // Manipular o evento para receber a lista de usuários online
-      this.io.on("onlineUsers", users => {
-        console.log("Lista de usuários online:", users);
+      this.io.on("onlineUsers", (users) => {
         // Faça algo com a lista de usuários, como exibí-la na interface do usuário
         this.listUsers(users);
       });
       this.io.on("letsGo", (data, callback) => {
-        addToaster(data, this.io)
-        callback({teste: 'Help'})
+        data.socket = this.io;
+        data.callback = callback;
+        addToaster(data);
       });
 
-      this.io.on("disconnect", socket => {
+      this.io.on("disconnect", (socket) => {
         showStateElem.innerHTML =
           '<i class="fi fi-br-wifi-slash text-red-500"></i>';
         this.pingStatusElement.classList = "ping-very-poor";
@@ -37,7 +37,7 @@ export class SocketEvents {
       });
     });
 
-    this.io.on("reconnect_attempt", attempt => {
+    this.io.on("reconnect_attempt", (attempt) => {
       // ...
       console.log("Reconectando");
     });
@@ -124,14 +124,15 @@ export class SocketEvents {
         <i class="fi fi-br-checkbox hidden"></i>
         <i class="fi fi-br-square-plus"></i>
     `;
-    removeButton.onclick = () => {
+    removeButton.onclick = async () => {
       const data = {
         from: this.username,
         msg: "Vamos jogar",
-        for: name
+        for: name,
       };
+
       this.io.emit("game", data, (res) => {
-         alert(res.test)
+        alert(res);
       });
     };
     const addButton = document.createElement("button");
@@ -150,10 +151,10 @@ export class SocketEvents {
 
   listUsers(users) {
     const ul = document.createElement("ul");
-    const otherUsers = users.filter(user => user.username !== this.username);
-    console.log("ttt ", this.username, otherUsers);
+    const otherUsers = users.filter((user) => user.username !== this.username);
+
     this.playerList.innerHTML = "";
-    otherUsers.forEach(item => {
+    otherUsers.forEach((item) => {
       const li = this.playerListItem(
         item.username,
         "/assets/img/michaelangelo.png"

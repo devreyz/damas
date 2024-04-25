@@ -1,9 +1,16 @@
-export function ToastComponent(data, io) {
+export function ToastComponent(data) {
   // Criar o elemento li
   this.element = document.createElement("li");
   this.element.className =
     "animate-swipUp absolute bottom-0 w-80 bg-white shadow-lg rounded-lg overflow-hidden border border-stone-900";
+  this.closeToast = () => {
+    this.element.classList.add("animate-swipRight");
+    this.element.addEventListener("animationend", () => {
+      this.element.remove();
+    });
+  };
   setTimeout(() => this.element.classList.remove("animate-swipUp"), 300);
+  setTimeout(() => this.closeToast(), 5000);
   // Criar elementos internos
   this.header = document.createElement("div");
   this.header.className =
@@ -20,33 +27,34 @@ export function ToastComponent(data, io) {
     </svg>
   `;
   this.closeButton.onclick = () => {
-    this.element.classList.add("animate-swipRight");
-    this.element.addEventListener("animationend", () => {
-      this.element.remove();
-    });
+    data.callback(false);
+    this.closeToast();
   };
   this.body = document.createElement("div");
   this.body.className = "p-4";
   this.message = document.createElement("p");
   this.message.className = "text-sm text-gray-600";
-  this.message.textContent = data.from + " te convidou para uma partida"
+  this.message.innerHTML = `<span class="font-semibold text-stone-950">${data.from}</span> te convidou para uma partida`;
   this.footer = document.createElement("div");
   this.footer.className = "px-4 py-2 gap-4 bg-stone-100 flex justify-end";
   this.acceptButton = document.createElement("button");
-  
+
   this.acceptButton.className =
     "px-4 flex-1 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none";
   this.acceptButton.textContent = "Aceitar";
   this.acceptButton.onclick = () => {
-    
-  }
-  
-  
+    data.callback(true);
+    this.closeToast();
+  };
+
   this.declineButton = document.createElement("button");
   this.declineButton.className =
     "px-4 flex-1 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none";
   this.declineButton.textContent = "Recusar";
-
+  this.declineButton.onclick = () => {
+    data.callback(false);
+    this.closeToast();
+  };
   // Adicionar elementos internos ao header
   this.header.appendChild(this.title);
   this.header.appendChild(this.closeButton);
@@ -63,10 +71,10 @@ export function ToastComponent(data, io) {
   this.element.appendChild(this.body);
   this.element.appendChild(this.footer);
 }
-export function addToaster(data, io) {
+export function addToaster(data) {
   const toaster = document.getElementById("toaster");
   const items = toaster.querySelectorAll("li");
-  items.forEach(elem => {
+  items.forEach((elem) => {
     elem.classList.remove("animate-swipUp");
   });
 
@@ -77,6 +85,4 @@ export function addToaster(data, io) {
 
   // Inserir o novo elemento antes do primeiro filho existente
   toaster.insertBefore(li.element, firstChild);
-
-  //toaster.appendChild(li.element);
 }
