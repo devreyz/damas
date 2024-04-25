@@ -2,11 +2,61 @@
 @tailwind components;
 @tailwind utilities;
 
-.board{
-  @apply 
-}
-
 canvas {
   display: block;
   background: #333;
+}
+
+.success {
+  @apply text-green-600;
+}
+.error {
+  @apply text-red-600;
+}
+
+.alert {
+  @apply text-orange-400;
+}
+#ping {
+  @apply transition-colors duration-150;
+}
+.ping-excellent {
+  @apply text-cyan-500;
+}
+.ping-good {
+  @apply text-blue-500;
+}
+.ping-acceptable {
+  @apply text-yellow-500;
+}
+.ping-fair {
+  @apply text-amber-500;
+}
+.ping-poor {
+  @apply text-orange-500;
+}
+.ping-very-poor {
+  @apply text-red-500;
+}
+
+.toaster {
+}
+.toaster li {
+  @apply transition-all duration-500 opacity-0;
+}
+
+.toaster li:nth-child(1) {
+  @apply scale-100 mb-0 z-[10] opacity-100;
+}
+.toaster li:nth-child(2) {
+  @apply scale-95 mb-4 z-[9] opacity-75 blur-[0.5px];
+}
+.toaster li:nth-child(3) {
+  @apply mb-8 scale-90 z-[8] opacity-50 blur-[3px];
+}
+.toaster li:nth-child(4) {
+  @apply mb-12 scale-[0.85] z-[7] opacity-30 blur-[5px];
+}
+.toaster li:nth-child(5) {
+  @apply mb-16 scale-50 z-[6] opacity-10;
 }

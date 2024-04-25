@@ -1,5 +1,20 @@
 import JsonWebToken from "jsonwebtoken";
 import dotenv from "dotenv";
+import multer from 'multer';
+import { diskStorage } from 'multer';
+
+// Configuração do multer para salvar os arquivos no diretório 'uploads'
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, '/assets/uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const upload = multer({ storage: storage });
+
 
 dotenv.config();
 const jwt = JsonWebToken;
@@ -20,15 +35,24 @@ export class Routes {
     this.app.get("/game/home", this.validtoken, (req, res) => {
       res.sendFile(__dirname + "/public/game.html");
     });
+    
+    
+    
     this.app.post("/auth/register", async (req, res) => {
       const { name, password } = req.body;
 
       // Validação dos dados de entrada
       if (!name) {
-        return res.status(400).send("O nome é obrigatório");
+        return res.status(400).json({
+          status: "alert",
+          msg: "<i class='fi fi-br-exclamation'></i> O nome e Obrigatório!"
+        });
       }
       if (!password) {
-        return res.status(400).send("A senha é obrigatória");
+        return res.status(400).json({
+          status: "alert",
+          msg: "<i class='fi fi-br-exclamation'></i> A senha e Obrigatória!"
+        });
       }
 
       await this.conn.query(
@@ -36,12 +60,24 @@ export class Routes {
         [name, password],
         (error, results) => {
           if (error) {
-            console.error("Erro ao salvar dados no banco de dados:", error);
-            res.status(500).send("Erro ao salvar dados no banco de dados");
+            if ((error.code = "ER_DUP_ENTRY")) {
+              res.status(500).json({
+                status: "error",
+                msg: "<i class='fi fi-br-times-hexagon'></i> Nome indisponível!"
+              });
+            } else {
+              res.status(500).json({
+                status: "error",
+                msg: "<i class='fi fi-br-times-hexagon'></i> Houve um erro no servidor, tente novamente mais tarde!"
+              });
+            }
             return;
           }
-          console.log("Dados salvos no banco de dados com sucesso");
-          res.send("Dados recebidos e salvos com sucesso!");
+
+          res.status(201).json({
+            status: "success",
+            msg: "<i class='fi fi-br-comment-check'></i>Conta criada com sucesso!"
+          });
         }
       );
     });
@@ -51,10 +87,16 @@ export class Routes {
       const { name, password } = req.body;
       // Validação dos dados de entrada
       if (!name) {
-        return res.status(400).send("O nome é obrigatório");
+        return res.status(201).json({
+          status: "alert",
+          msg: "<i class='fi fi-br-exclamation'></i> O nome é Obrigatório!"
+        });
       }
       if (!password) {
-        return res.status(400).send("A senha é obrigatória");
+        return res.status(201).json({
+          status: "alert",
+          msg: "<i class='fi fi-br-exclamation'></i> A senha é Obrigatória!"
+        });
       }
 
       // Consulta ao banco de dados para encontrar o usuário com as credenciais fornecidas
@@ -63,16 +105,20 @@ export class Routes {
         [name, password],
         (error, results) => {
           if (error) {
-            console.error("Erro ao consultar o banco de dados:", error);
-            res.status(500).send("Erro ao consultar o banco de dados");
+            res.status(500).json({
+              status: "error",
+              msg: "<i class='fi fi-br-times-hexagon'></i> Houve um erro no servidor!"
+            });
             return;
           }
 
           // Verifica se o usuário foi encontrado
           if (results.length === 0) {
             // Se não houver usuário com essas credenciais, envie uma mensagem de erro
-            console.log("Usuário não encontrado");
-            res.status(401).send("Credenciais inválidas");
+            res.status(401).json({
+              status: "alert",
+              msg: "<i class='fi fi-br-exclamation'></i> Usuário não encontrado!"
+            });
             return;
           }
 
@@ -81,14 +127,13 @@ export class Routes {
           // Cria um token JWT com o nome do usuário
           const { id, name } = results[0];
           const token = jwt.sign({ id, name }, process.env.SECRET, {
-            expiresIn: "600s",
+            expiresIn: process.env.EXPIRE_TOKEN
           });
           res.clearCookie("token");
+          res.clearCookie("username");
+          res.cookie("username", name);
           res.cookie("token", token, { httpOnly: true });
-          res.redirect(
-            // res.status(200).send("Login efetuado com sucesso");
-            "/game/home"
-          );
+          res.redirect("/game/home");
         }
       );
     });
@@ -102,14 +147,14 @@ export class Routes {
     const token = req.cookies.token;
 
     if (!token) {
-      return res.status(401).send("Faça login");
-      // return res.redirect("http://localhost:3000/");
+      //return res.status(401).send("Faça login");
+      return res.redirect("/");
     }
 
     jwt.verify(token, process.env.SECRET, (err, decoded) => {
       if (err) {
-        return res.status(401).send("Sessão expirada faça login novamente");
-        // return res.redirect("http://localhost:3000/");
+        // return res.status(401).send("Sessão expirada faça login novamente");
+        return res.redirect("/");
       }
       req.user = decoded; // Adiciona o usuário decodificado ao objeto de solicitação
 

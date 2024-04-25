@@ -1,60 +1,102 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0" />
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jogo de Damas</title>
-  <link rel="stylesheet" href="assets/css/styles.css">
-</head>
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.3.0/uicons-bold-rounded/css/uicons-bold-rounded.css" />
 
-<body class="min-h-screen pb-12 bg-stone-100">
-  <header class="sticky bg-stone-400/80 backdrop-blur-md top-0 left-0 px-4 py-3 shadow-md">
-    <div class="container mx-auto">
+    <title>Jogo de Damas</title>
+    <link
+      rel="stylesheet"
+      href="assets/css/styles.css" />
+  </head>
 
-      <h1>Jogo de Damas</h1>
-    </div>
-  </header>
-  <main class="container mx-auto md:grid md:grid-cols-2">
-    <section class="flex justify-center items-center">
-      <img class="max-h-[80vh]" src="assets/img/imagem-damas-01.jpeg" alt="">
-    </section>
-    <section class="info-section px-4 py-3">
-      <div class=" auth-section mb-3">
-        <form method="post" action="/auth/login" class="shadow-md bg-white border p-3 rounded-lg border-stone-500 "
-          id="auth-form">
-          <h2 class="text-slate-800 font-medium text-xl mb-3">Login / Cadastro</h2>
-          <input class="mb-3 rounded-sm" type="text" name="name" placeholder="Nick" required>
-          <input class="mb-3 rounded-sm" type="password" name="password" placeholder="Senha" required>
-          <button class="block border rounded-sm py-1 px-4 bg-amber-900 text-white" type="submit">Entrar</button>
-
-        </form>
+  <body class="min-h-screen pb-12 bg-stone-100">
+    <header
+      class="sticky bg-stone-400/80 backdrop-blur-md top-0 left-0 px-4 py-3 shadow-md">
+      <div class="container mx-auto">
+        <h1>Jogo de Damas</h1>
       </div>
-      <div class="prose prose-slate ">
+    </header>
+    <main class="container mx-auto md:pt-3 md:grid md:grid-cols-2">
+      <section class="flex justify-center items-center">
+        <img
+          class="md:max-h-[70vh] md:rounded-sm"
+          src="assets/img/imagem-damas-01.jpeg"
+          alt="" />
+      </section>
+      <section class="info-section px-4 py-3 md:py-0">
+        <div class="auth-section mb-3">
+          <form
+            method="post"
+            class="shadow-md bg-white border p-3 rounded-lg border-stone-500"
+            id="auth-form">
+            <h2 class="text-slate-800 font-medium text-xl mb-3">
+              Login / Cadastro
+            </h2>
+            <div class="flex md:flex-col lg:flex-row gap-3">
+              <input
+                id="username"
+                class="mb-3 rounded-sm flex-1"
+                type="text"
+                name="name"
+                placeholder="Nick"
+                required />
+              <input
+                id="password"
+                class="mb-3 rounded-sm flex-1"
+                type="password"
+                name="password"
+                placeholder="Senha"
+                required />
+            </div>
+            <div class="flex gap-3">
+              <button
+                class="border rounded-sm py-1 px-4 bg-amber-900 text-white"
+                data-action="register"
+                type="submit">
+                Cadastrar
+              </button>
+              <button
+                class="border rounded-sm py-1 px-4 bg-amber-900 text-white"
+                data-action="login"
+                type="submit">
+                Entrar
+              </button>
+              <span id="msg-server"></span>
+            </div>
+          </form>
+        </div>
+        <div class="prose prose-slate">
+          <h2>Informações do Jogo</h2>
+          <p>
+            Bem-vindo ao emocionante mundo do jogo de damas! Prepare-se para
+            desafiar sua mente e testar suas habilidades estratégicas neste
+            clássico jogo de tabuleiro. Em cada movimento, você precisará
+            antecipar os passos do seu oponente, planejar cuidadosamente suas
+            jogadas e aproveitar as oportunidades para capturar as peças
+            adversárias. Com cada partida, você irá aprimorar sua técnica e se
+            tornar um mestre da estratégia. Venha se juntar a nós e mergulhe na
+            emoção do jogo de damas!
+          </p>
+        </div>
+      </section>
+    </main>
 
-        <h2>Informações do Jogo</h2>
-        <p>Bem-vindo ao emocionante mundo do jogo de damas! Prepare-se para desafiar sua mente e testar suas habilidades
-          estratégicas neste clássico jogo de tabuleiro. Em cada movimento, você precisará antecipar os passos do seu
-          oponente,
-          planejar cuidadosamente suas jogadas e aproveitar as oportunidades para capturar as peças adversárias. Com
-          cada
-          partida, você irá aprimorar sua técnica e se tornar um mestre da estratégia. Venha se juntar a nós e mergulhe
-          na
-          emoção do jogo de damas!</p>
+    <footer class="fixed w-screen bottom-0 bg-gray-800 text-white py-4">
+      <div class="container mx-auto text-center">
+        <p>&copy; 2024 Jogo de Damas. Todos os direitos reservados.</p>
       </div>
+    </footer>
 
-    </section>
-
-
-
-  </main>
-
-  <footer class="fixed w-screen bottom-0 bg-gray-800 text-white py-4">
-    <div class="container mx-auto text-center">
-      <p>&copy; 2024 Jogo de Damas. Todos os direitos reservados.</p>
-    </div>
-  </footer>
-
-</body>
-
+    <script
+      src="/js/auth.js"
+      type="module"
+      charset="utf-8"></script>
+  </body>
 </html>

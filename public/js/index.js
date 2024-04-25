@@ -1,24 +1,39 @@
+import { Socket, SocketEvents } from "/js/socket.js";
+import {ToastComponent} from "/js/components/Toaster.js"
+const username = document.cookie
+  .split("; ")
+  .find(row => row.startsWith("username="))
+  .split("=")[1];
 
-import { Game } from "./damas/game.js";
-import { Socket } from "./socket.js";
+document.getElementById("user-id").textContent = username;
 
-// Estado inicial do jogo
-let state = [
-  [null, "b", null, "b", null, "b", null, "b", null, "b"],
-  ["b", null, "b", null, "b", null, "b", null, "b", null],
-  [null, "b", null, "b", null, "b", null, "b", null, "b"],
-  [null, null, null, null, null, null, null, null, null, null],
-  [null, null, null, null, null, null, null, null, null, null],
-  [null, null, null, null, null, null, null, null, null, null],
-  [null, null, null, null, null, null, null, null, null, null],
-  ["w", null, "w", null, "w", null, "w", null, "w", null],
-  [null, "w", null, "w", null, "w", null, "w", null, "w"],
-  ["w", null, "w", null, "w", null, "w", null, "w", null],
-];
+const socketConfig = {
+  auth: {
+    username: username
+  }
+};
 
-const game = new Game("app", state);
+const io = new Socket(username).init(socketConfig);
+const socketEvents = new SocketEvents(io, username);
 
-game.render()
+socketEvents.connect();
+socketEvents.ping();
 
-const websocket = new Socket();
-const io = websocket.io();
+function addToaster() {
+  const toaster = document.getElementById("toaster");
+  const items = toaster.querySelectorAll("li");
+  items.forEach(elem => {
+    elem.classList.remove("animate-swipUp");
+  });
+
+  const li = new ToastComponent('Reyz');
+
+  // Obter o primeiro filho existente do elemento pai
+  const firstChild = toaster.firstChild;
+
+  // Inserir o novo elemento antes do primeiro filho existente
+  toaster.insertBefore(li.element, firstChild);
+
+  //toaster.appendChild(li.element);
+}
+document.getElementById("btnToaster").onclick = event => addToaster();
