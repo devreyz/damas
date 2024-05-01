@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.3.0/uicons-bold-rounded/css/uicons-bold-rounded.css" />
+
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+  <title>Jogo de Damas</title>
+</head>
+
+<body class="bg-stone-200">
+  <div class="fixed flex gap-2 top-2 right-2 text-lg">
+    <span class="text-white" id="ping"><i class="fi fi-br-menu-dots"></i></span>
+    <div id="show-connect-socket" class="">
+      <i class="fi fi-br-loading text-amber-400 text-lg"></i>
+    </div>
+  </div>
+
+  <header class="bg-slate-50 py-4 text-center shadow">
+    <h1 class="text-3xl font-bold text-slate-700">Jogo de Damas</h1>
+  </header>
+
+  <main class="container mx-auto my-8">
+    <section class="mb-8 p-1 bg-slate-900/30 shadow">
+      <h2 class="text-2xl font-semibold mb-4">Jogadores Online</h2>
+      <div class="flex justify-between gap-3 bg-stone-950/20 rounded-md p-1">
+        <form class="flex-1 bg-white rounded" id="" action="" method="post" accept-charset="utf-8">
+          <input type="search" class="form-input w-full" name="" id="" value="" placeholder="Buscar..." />
+        </form>
+        <button id="refreshPlayersBtn" class="bg-stone-500 flex text-white px-4 py-2 rounded shadow hover:bg-blue-600">
+          <i class="fi fi-br-rotate-right"></i>
+        </button>
+      </div>
+      <ul id="playerList"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-1 gap-0.5 max-h-80 overflow-y-scroll rounded-md overflow-hidden bg-stone-100 p-1">
+        <!-- Lista de jogadores online será preenchida dinamicamente aqui -->
+      </ul>
+    </section>
+
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold mb-4">Informações do Jogo</h2>
+      <div id="playerInfo" class="bg-white rounded shadow p-4 mb-4">
+        <h3 class="text-xl font-semibold mb-2">Seu Perfil</h3>
+        <p>Nome: <span id="user-id">null</span></p>
+        <p>Nível: 5</p>
+        <p>Pontuação: 1000</p>
+        <button id="btnToaster">Toaster</button>
+      </div>
+      <div id="otherPlayersInfo" class="bg-white rounded shadow p-4">
+        <h3 class="text-xl font-semibold mb-2">Perfil de Outro Jogador</h3>
+        <p>Nome: Jogador 2</p>
+        <p>Nível: 3</p>
+        <p>Pontuação: 800</p>
+      </div>
+    </section>
+  </main>
+  
+    <!-- Script externo para manipulação do countdown -->
+    
+  
+  <ul id="toaster" class="toaster fixed w-80 bottom-4 right-4 z-50"></ul>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="module" src="/js/index.js"></script>
+</body>
+
+</html>

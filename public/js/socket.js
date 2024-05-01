@@ -1,5 +1,6 @@
 import { addToaster } from "/js/components/Toaster.js";
-
+import EventEmitter from "./utils/EventEmitter.js";
+import { startCountdown } from "./components/countDown.js";
 export class Socket {
   constructor() {
     this.init = (options) => io(options);
@@ -18,15 +19,26 @@ export class SocketEvents {
     this.io.on("connect", (socket) => {
       showStateElem.innerHTML = '<i class="fi fi-br-wifi text-green-500"></i>';
 
-      // Manipular o evento para receber a lista de usuários online
-      this.io.on("onlineUsers", (users) => {
-        // Faça algo com a lista de usuários, como exibí-la na interface do usuário
-        this.listUsers(users);
+      this.io.on("JoinRequestNotification", (data, callback) => {
+        EventEmitter.emit("addtoast", data, (res) => {
+          callback(res);
+        });
       });
-      this.io.on("letsGo", (data, callback) => {
-        data.socket = this.io;
-        data.callback = callback;
-        addToaster(data);
+
+      this.io.on("initgame", (data) => {
+        startCountdown(2000, "/game/?id=" + data.roomName);
+      });
+
+
+      this.io.on("hi", callback => {
+        callback("hello")
+      })
+
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) {
+          // Verifica se a página não está oculta
+          this.io.emit("refreshsocketid")
+        }
       });
 
       this.io.on("disconnect", (socket) => {
@@ -42,6 +54,7 @@ export class SocketEvents {
       console.log("Reconectando");
     });
   }
+  desconect() {}
   ping() {
     var startTime = Date.now();
     this.pingStatusElement = document.getElementById("ping");
@@ -132,7 +145,7 @@ export class SocketEvents {
       };
 
       this.io.emit("game", data, (res) => {
-        alert(res);
+        console.log(res);
       });
     };
     const addButton = document.createElement("button");
@@ -149,17 +162,23 @@ export class SocketEvents {
     return this.element;
   }
 
-  listUsers(users) {
-    const ul = document.createElement("ul");
-    const otherUsers = users.filter((user) => user.username !== this.username);
-
-    this.playerList.innerHTML = "";
-    otherUsers.forEach((item) => {
-      const li = this.playerListItem(
-        item.username,
-        "/assets/img/michaelangelo.png"
+  async listUsers() {
+    // Manipular o evento para receber a lista de usuários online
+    this.io.emit("onlineUsers", (users) => {
+      console.log(users);
+      const ul = document.createElement("ul");
+      const otherUsers = users.filter(
+        (user) => user.username !== this.username
       );
-      this.playerList.appendChild(li);
+
+      this.playerList.innerHTML = "";
+      otherUsers.forEach((item) => {
+        const li = this.playerListItem(
+          item.username,
+          "/assets/img/michaelangelo.png"
+        );
+        this.playerList.appendChild(li);
+      });
     });
   }
 }

@@ -4,94 +4,164 @@ import { Server } from "socket.io";
 import path from "path";
 import mysql from "mysql";
 import dotenv from "dotenv";
-import bodyParser from "body-parser";
 import { Routes } from "./routes/Routes.js";
 import cookieParser from "cookie-parser";
-import { log } from "console";
 
 // import { Routes } from "./routes/Routes.js";
 global.__dirname = path.resolve();
 
 dotenv.config();
 
+/**
+ * Classe principal do aplicativo.
+ */
 class App {
+  /**
+   * Construtor da classe App.
+   */
   constructor() {
-    this.app = express();
-    this.http = http.createServer(this.app);
-    this.io = new Server(this.http);
-
-    this.connections = {};
-    this.conversations = {};
-    this.initialize();
+    this.app = express(); // Inicializa o express
+    this.http = http.createServer(this.app); // Cria o servidor HTTP
+    this.io = new Server(this.http); // Inicializa o Socket.IO
+    this.connections = {}; // Armazena informações sobre as conexões dos usuários
+    this.rooms = {}; // Armazena informações sobre as salas
+    this.initialize(); // Inicializa o aplicativo
   }
+
+  /**
+   * Método para inicializar o aplicativo.
+   */
   initialize() {
     this.conn = mysql.createConnection({
+      // Cria a conexão com o banco de dados MySQL
       host: process.env.DB_HOST,
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
     });
-    // Defina o diretório onde seus arquivos estáticos (CSS, JavaScript, imagens, etc.) estão localizados
-    this.app.use(express.static(path.join(__dirname, "public")));
-    this.app.use(express.urlencoded({ extended: true }));
-    this.app.use(cookieParser());
-    this.app.use;
-    this.listenSocket();
-    this.routes = new Routes(this.app, this.conn);
+
+    this.app.use(express.static(path.join(__dirname, "public"))); // Configura o middleware para servir arquivos estáticos
+    this.app.use(express.urlencoded({ extended: true })); // Configura o middleware para decodificar dados de formulário
+    this.app.use(cookieParser()); // Configura o middleware para analisar cookies
+
+    this.listenSocket(); // Configura os eventos do Socket.IO
+    this.routes = new Routes(this.app, this.conn); // Configura as rotas do aplicativo
   }
+
+  /**
+   * Método para iniciar o servidor HTTP.
+   */
   listenServer() {
-    this.app.use(express.json());
+    this.app.use(express.json()); // Configura o middleware para decodificar JSON
+
     this.conn.connect((err) => {
+      // Conecta-se ao banco de dados MySQL
       if (err) throw err;
       this.http.listen(3000, () =>
+        // Inicia o servidor HTTP
         console.log("Server is running, in http://localhost:3000/")
       );
     });
-    // Inicialize o servidor na porta 3000
   }
 
+  /**
+   * Método para lidar com eventos do Socket.IO.
+   */
   listenSocket() {
     this.io.on("connection", (socket) => {
-      const username = socket.handshake.auth.username;
+      // Configura os eventos para quando um usuário se conecta
+      const username = socket.handshake.auth.username; // Obtém o nome de usuário do handshake
       this.connections[username] = {
+        // Armazena informações sobre a conexão do usuário
         id: socket.id,
         username: username,
+        isConected: true,
       };
-      //console.log(this.connections);
+      const player = this.connections[username];
+      // console.log(this.rooms);
 
-      //socket.broadcast.emit("player_connected", {msg: "Um novo jogador se conectou!"});
+      socket.on("refreshsocketid", () => {
+        //  Atualiza o socket.id do jogador quando o jogo entra em foco
+        this.connections[username].id = socket.id;
+      });
+
       socket.on("ping", () => {
+        // Configura o evento ping-pong para verificar a conexão
         socket.emit("pong");
       });
 
-      this.io.emit("onlineUsers", Object.values(this.connections));
+      socket.on("onlineUsers", (cd) => {
+        // Configura o evento para obter usuários online
+        cd(Object.values(this.connections));
+      });
 
       socket.on("game", (data, callback) => {
+        // Configura o evento para iniciar um jogo
+        const playerFrom = this.connections[data.from];
+        const playerTo = this.connections[data.for];
+
+        // Emite uma notificação de solicitação de jogo para o outro jogador
         this.io
-          .to(this.connections[data.for].id)
+          .to(playerTo.id)
           .timeout(5000)
-          .emit("letsGo", data, (err, res) => {
+          .emit("JoinRequestNotification", data, (err, res) => {
             if (err) {
-              callback("Tempo esgotado");
+              callback(false);
             } else {
-              if (res == true) {
-                callback(data.for + " aceitou o desafio");
+              if (res[0]) {
+                callback(true);
+                const roomName = crypto.randomUUID(); // Crie  um id randômico para a sala
+                // Emite o evento de inicialização do jogo para ambos os jogadores
+
+                this.io.to(playerFrom.id).emit("initgame", { roomName });
+                this.io.to(playerTo.id).emit("initgame", { roomName });
+                const usernameFrom = playerFrom.username;
+                const usernameTo = playerTo.username;
+                this.rooms[roomName] = {
+                  [usernameFrom]: playerFrom,
+                  [usernameTo]: playerTo,
+                };
               } else {
-                callback(data.for + " recusou o desafio");
+                callback(false);
               }
-              console.log("Consegui " + res);
             }
           });
       });
 
       socket.on("disconnect", () => {
-        delete this.connections[username];
-
-        this.io.emit("onlineUsers", Object.values(this.connections));
+        console.log(username);
+        if (this.connections[username]) {
+          // Configura o evento para quando um usuário se desconecta
+          try {
+            this.connections[username].isConected = false;
+            setTimeout(() => {
+              // Define um timeout para excluir as informações do usuário após 10 segundos
+              if (
+                this.connections[username] &&
+                !this.connections[username].isConected
+              ) {
+                this.io
+                  .to(this.connections[username].id)
+                  .timeout(5000)
+                  .emit("hi", (err, res) => {
+                    if (err || res[0] !== "hello") {
+                      delete this.connections[username];
+                      console.log("Usuario removido: " + username);
+                    } else {
+                      console.log(res);
+                      
+                    }
+                  });
+              }
+            }, 30000);
+          } catch (error) {
+            console.log(error);
+          }
+        }
       });
     });
   }
 }
 
-const app = new App();
-app.listenServer();
+const app = new App(); // Cria uma instância da classe App
+app.listenServer(); // Inicia o servidor HTTP

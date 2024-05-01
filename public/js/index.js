@@ -1,39 +1,44 @@
 import { Socket, SocketEvents } from "/js/socket.js";
-import {ToastComponent} from "/js/components/Toaster.js"
+import { addToaster } from "/js/components/Toaster.js"
+import { startCountdown } from "./components/countDown.js";
+
+
 const username = document.cookie
   .split("; ")
   .find(row => row.startsWith("username="))
   .split("=")[1];
 
-document.getElementById("user-id").textContent = username;
-
-const socketConfig = {
-  auth: {
-    username: username
-  }
-};
-
-const io = new Socket(username).init(socketConfig);
-const socketEvents = new SocketEvents(io, username);
+  
+  const socketConfig = {
+    auth: {
+      username: username
+    }
+  };
+  
+  
+  const io = new Socket(username).init(socketConfig);
+  const socketEvents = new SocketEvents(io, username);
+  const refreshPlayersBtn = document.getElementById("refreshPlayersBtn");
+  const userId = document.getElementById("user-id")
 
 socketEvents.connect();
 socketEvents.ping();
+socketEvents.listUsers();
+refreshPlayersBtn.onclick = () => socketEvents.listUsers();
+setInterval(() => socketEvents.listUsers(), 10000)
+userId.textContent = username;
 
-function addToaster() {
-  const toaster = document.getElementById("toaster");
-  const items = toaster.querySelectorAll("li");
-  items.forEach(elem => {
-    elem.classList.remove("animate-swipUp");
-  });
 
-  const li = new ToastComponent('Reyz');
 
-  // Obter o primeiro filho existente do elemento pai
-  const firstChild = toaster.firstChild;
-
-  // Inserir o novo elemento antes do primeiro filho existente
-  toaster.insertBefore(li.element, firstChild);
-
-  //toaster.appendChild(li.element);
+// Função para exibir um alerta quando a página volta ao foco
+function handlePageFocus() {
+  console.log("A página está de volta ao foco!");
 }
-document.getElementById("btnToaster").onclick = event => addToaster();
+
+// Adiciona um ouvinte de evento para quando a página volta ao foco
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) { // Verifica se a página não está oculta
+    handlePageFocus();
+  }
+});
+

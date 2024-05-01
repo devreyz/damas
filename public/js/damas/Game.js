@@ -1,13 +1,20 @@
-import { Board } from "./Board.js";
+import { Socket, SocketEvents } from "/js/socket.js";
 
-export class Game {
-  constructor(skecth, state) {
-    this.skecth = document.getElementById(skecth)
-    this.board = new Board(10)
-    this.state = state;
-  }
-  render() {
-    this.skecth.appendChild(this.board)
-    return this.skecth
-  }
-}
+const username = document.cookie
+  .split("; ")
+  .find((row) => row.startsWith("username="))
+  .split("=")[1];
+
+const socketConfig = {
+  auth: {
+    username: username,
+  },
+};
+
+const io = new Socket(username).init(socketConfig);
+const socketEvents = new SocketEvents(io, username);
+
+socketEvents.connect();
+socketEvents.ping();
+
+

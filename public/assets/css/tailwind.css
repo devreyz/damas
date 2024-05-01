@@ -2,9 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-
-body{
-  @apply select-none
+body {
+  @apply select-none;
 }
 
 .success {
@@ -39,10 +38,8 @@ body{
   @apply text-red-500;
 }
 
-.toaster {
-}
 .toaster li {
-  @apply transition-all duration-500 opacity-0;
+  @apply transition-all duration-500 opacity-0 mb-12 scale-50 z-0;
 }
 
 .toaster li:nth-child(1) {
@@ -59,4 +56,9 @@ body{
 }
 .toaster li:nth-child(5) {
   @apply mb-16 scale-50 z-[6] opacity-10;
+}
+
+/* Estilo personalizado para o elemento flutuante */
+.countdown-container {
+  @apply fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white border-2 border-gray-300 rounded-lg p-6 text-center shadow-lg;
 }
