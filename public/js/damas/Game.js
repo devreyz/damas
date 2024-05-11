@@ -17,4 +17,10 @@ const socketEvents = new SocketEvents(io, username);
 socketEvents.connect();
 socketEvents.ping();
 
+function setup() {
+  createCanvas(400, 400);
+}
 
+function draw() {
+  background(220);
+}

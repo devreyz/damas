@@ -1,4 +1,4 @@
 function redirectToGame(roomName) {
-  window.location.href = "/game/?id="+=roomName
+  window.location.href = "/game/?room="+=roomName
 }
 

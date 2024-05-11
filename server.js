@@ -94,6 +94,11 @@ class App {
         // Configura o evento para obter usuários online
         cd(Object.values(this.connections));
       });
+      
+      socket.on('listRooms', callback => {
+        //console.log("Listar salas chamado")
+        callback(this.rooms)
+      })
 
       socket.on("game", (data, callback) => {
         // Configura o evento para iniciar um jogo
@@ -120,6 +125,8 @@ class App {
                 this.rooms[roomName] = {
                   [usernameFrom]: playerFrom,
                   [usernameTo]: playerTo,
+                  turn: null
+                  
                 };
               } else {
                 callback(false);

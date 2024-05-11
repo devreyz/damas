@@ -54,6 +54,11 @@ export class SocketEvents {
       console.log("Reconectando");
     });
   }
+  listRooms(){
+    this.io.emit("listRooms", rooms => {
+        console.log(rooms)
+      })
+  }
   desconect() {}
   ping() {
     var startTime = Date.now();
@@ -145,7 +150,7 @@ export class SocketEvents {
       };
 
       this.io.emit("game", data, (res) => {
-        console.log(res);
+        //console.log(res);
       });
     };
     const addButton = document.createElement("button");
@@ -165,7 +170,7 @@ export class SocketEvents {
   async listUsers() {
     // Manipular o evento para receber a lista de usuários online
     this.io.emit("onlineUsers", (users) => {
-      console.log(users);
+      //console.log(users);
       const ul = document.createElement("ul");
       const otherUsers = users.filter(
         (user) => user.username !== this.username
