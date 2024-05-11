@@ -1,6 +1,5 @@
+
 import { Socket, SocketEvents } from "/js/socket.js";
-import { addToaster } from "/js/components/Toaster.js"
-import { startCountdown } from "./components/countDown.js";
 
 
 const username = document.cookie
@@ -14,7 +13,7 @@ const username = document.cookie
       username: username
     }
   };
-  
+ 
   
   const io = new Socket(username).init(socketConfig);
   const socketEvents = new SocketEvents(io, username);
@@ -47,4 +46,4 @@ document.addEventListener("visibilitychange", () => {
     handlePageFocus();
   }
 });
-
+alert()
