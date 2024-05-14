@@ -1,9 +1,37 @@
+let render = ()=>{}
+let canvasSquare = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
 
-
+// Estado inicial do jogo
+let state = [
+  [0, "b", 0, "b", 0, "b", 0, "b", 0, "b"],
+  ["b", 0, "b", 0, "b", 0, "b", 0, "b", 0],
+  [0, "b", 0, "b", 0, "b", 0, "b", 0, "b"],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  ["w", 0, "w", 0, "w", 0, "w", 0, "w", 0],
+  [0, "w", 0, "w", 0, "w", 0, "w", 0, "w"],
+  ["w", 0, "w", 0, "w", 0, "w", 0, "w", 0],
+];
+document.getElementById("teste").onclick = () => {
+ state = [
+  [0, "b", 0, "b", 0, "b", 0, "b", 0, "b"],
+  ["b", 0, "b", 0, "b", 0, "b", 0, "b", 0],
+  [0, "b", 0, "b", 0, "b", 0, "b", 0, "b"],
+  [0, 0, 0, 'b', 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  ["w", 0, "w", 0, "w", 0, "w", 0, "w", 0],
+  [0, "w", 0, "w", 0, "w", 0, "w", 0, "w"],
+  ["w", 0, "w", 0, "w", 0, "w", 0, "w", 0],
+];
+}
 function setup() {
   // put setup code here
-  createCanvas(window.innerWidth, window.innerHeight);
-  background("#4668a9");
+  createCanvas(canvasSquare, canvasSquare)
+
 }
 
 let lastPos = {
@@ -11,11 +39,5 @@ let lastPos = {
   y: 0,
 };
 function draw() {
-  // background('#000');
-  fill("#ff3333");
-  stroke("#000");
-  circle(mouseX, mouseY, 3, 3);
-  lastPos.x = mouseX;
-  lastPos.y = mouseY;
+  render()
 }
-window.onresize = () => setup();

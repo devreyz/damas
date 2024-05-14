@@ -46,4 +46,3 @@ document.addEventListener("visibilitychange", () => {
     handlePageFocus();
   }
 });
-alert()

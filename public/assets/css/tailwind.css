@@ -62,3 +62,6 @@ body {
 .countdown-container {
   @apply fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white border-2 border-gray-300 rounded-lg p-6 text-center shadow-lg;
 }
+canvas{
+  @apply fixed w-full h-full p-4 border top-1/2 left-1/2  -translate-y-1/2  -translate-x-1/2 bg-slate-900
+}
