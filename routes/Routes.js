@@ -31,6 +31,10 @@ export class Routes {
     this.app.get("/", this.validtoken, (req, res) => {
       res.sendFile(__dirname + "/public/index.html");
     });
+    
+    this.app.get("/admin", this.validtoken, (req, res) => {
+      res.sendFile(__dirname + "/public/admin.html");
+    });
     this.app.get("/home", this.validtoken, (req, res) => {
       res.sendFile(__dirname + "/public/home.html");
     });

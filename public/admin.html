@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .dark-mode {
+            --tw-bg-opacity: 1;
+            background-color: rgba(31, 41, 55, var(--tw-bg-opacity));
+            color: white;
+        }
+        .table-dark {
+            --tw-bg-opacity: 1;
+            background-color: rgba(17, 24, 39, var(--tw-bg-opacity));
+            color: white;
+        }
+        .table-dark th, .table-dark td {
+            border-color: rgba(55, 65, 81, var(--tw-border-opacity));
+        }
+    </style>
+</head>
+<body class="dark-mode">
+
+    <div class="container mx-auto p-6">
+        <h1 class="text-4xl font-extrabold text-center mb-6 text-indigo-400">Admin Dashboard</h1>
+
+        <div class="bg-gray-800 shadow-md rounded-lg p-6 mb-8">
+            <h2 class="text-3xl font-semibold mb-4 text-teal-300">Jogadores Online</h2>
+            <table class="min-w-full table-dark border border-gray-700">
+                <thead>
+                    <tr>
+                        <th class="py-3 px-5 border-b">Nome do Jogador</th>
+                        <th class="py-3 px-5 border-b">ID do Socket</th>
+                        <th class="py-3 px-5 border-b">Sala</th>
+                        <th class="py-3 px-5 border-b">Status do Jogo</th>
+                    </tr>
+                </thead>
+                <tbody id="players-table-body">
+                    <!-- Dados dos jogadores serão inseridos aqui -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="bg-gray-800 shadow-md rounded-lg p-6">
+            <h2 class="text-3xl font-semibold mb-4 text-teal-300">Salas de Jogo</h2>
+            <table class="min-w-full table-dark border border-gray-700">
+                <thead>
+                    <tr>
+                        <th class="py-3 px-5 border-b">ID da Sala</th>
+                        <th class="py-3 px-5 border-b">Jogador 1</th>
+                        <th class="py-3 px-5 border-b">Jogador 2</th>
+                        <th class="py-3 px-5 border-b">Estado da Partida</th>
+                        <th class="py-3 px-5 border-b">Tempo Restante</th>
+                    </tr>
+                </thead>
+                <tbody id="rooms-table-body">
+                    <!-- Dados das salas serão inseridos aqui -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Simulação de dados, você deve substituir isso com a lógica para buscar os dados do servidor
+        const players = [
+            { name: 'Player1', socketId: 'socket123', room: 'room1', gameState: 'Jogando' },
+            { name: 'Player2', socketId: 'socket456', room: 'room1', gameState: 'Jogando' },
+            // Adicione mais jogadores conforme necessário
+        ];
+
+        const rooms = [
+            { roomId: 'room1', player1: 'Player1', player2: 'Player2', gameState: 'Jogando', remainingTime: '10:23' },
+            { roomId: 'room2', player1: 'Player3', player2: 'Player4', gameState: 'Aguardando', remainingTime: '15:00' },
+            // Adicione mais salas conforme necessário
+        ];
+
+        // Função para renderizar os dados dos jogadores na tabela
+        function renderPlayers() {
+            const playersTableBody = document.getElementById('players-table-body');
+            playersTableBody.innerHTML = '';
+            players.forEach(player => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="py-3 px-5 border-b">${player.name}</td>
+                    <td class="py-3 px-5 border-b">${player.socketId}</td>
+                    <td class="py-3 px-5 border-b">${player.room}</td>
+                    <td class="py-3 px-5 border-b">${player.gameState}</td>
+                `;
+                playersTableBody.appendChild(row);
+            });
+        }
+
+        // Função para renderizar os dados das salas na tabela
+        function renderRooms() {
+            const roomsTableBody = document.getElementById('rooms-table-body');
+            roomsTableBody.innerHTML = '';
+            rooms.forEach(room => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="py-3 px-5 border-b">${room.roomId}</td>
+                    <td class="py-3 px-5 border-b">${room.player1}</td>
+                    <td class="py-3 px-5 border-b">${room.player2}</td>
+                    <td class="py-3 px-5 border-b">${room.gameState}</td>
+                    <td class="py-3 px-5 border-b">${room.remainingTime}</td>
+                `;
+                roomsTableBody.appendChild(row);
+            });
+        }
+
+        // Chamar as funções para renderizar os dados
+        renderPlayers();
+        renderRooms();
+    </script>
+</body>
+</html>
