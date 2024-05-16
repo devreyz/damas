@@ -1,68 +1,66 @@
-// Definindo as cores
-const orangeLight = "#FFA500"; // Laranja claro
-const white = "#FFFFFF"; // Branco
-const brown = "#8B4513"; // Marrom
-const gray = "#D3D3D3"; // Cinza
-const orangeLighter = "#FFD700"; // Laranja mais claro
-const whiteOff = "#FFFFF0"; // Branco off-white
+export const CheckersBoardFactory = (function () {
+  // CheckersBoard Singleton Factory
+  let instance; // Instância única do tabuleiro
 
-// Tamanho do tabuleiro
-let boardSize =
-  window.innerWidth > window.innerHeight
-    ? window.innerHeight
-    : window.innerWidth;
-let squareSize = boardSize / 10;
+  function createInstance() {
+    const board = [];
 
-export class Board {
-  constructor(state) {
-    this.elem = document.createElement("div");
-    this.resize();
-    this.state = state
-  }
-  render() {
-    
-    background(brown); // Background marrom
-    
-    
-    
+    // Inicializa o tabuleiro 10x10
+    for (let i = 0; i < 10; i++) {
+      board[i] = new Array(10).fill(null);
+    }
 
-    // Desenhar quadrados do tabuleiro e peças
-    for (let row = 0; row < 10; row++) {
-      for (let col = 0; col < 10; col++) {
-        // Desenha o quadrado do tabuleiro
-        if ((row + col) % 2 === 0) {
-          fill(orangeLight); // Quadrados claros
-        } else {
-          fill(white); // Quadrados escuros
+    // Método para inicializar as peças no tabuleiro
+    function initializeBoard() {
+      for (let row = 0; row < 4; row++) {
+        for (let col = 0; col < 10; col++) {
+          if ((row + col) % 2 === 1) {
+            board[row][col] = { color: "black", king: false };
+          }
         }
-        rect(col * squareSize, row * squareSize, squareSize, squareSize);
-
-        // Desenha as peças
-        let piece = state[row][col];
-        if (piece === "b") {
-          fill(orangeLighter); // Peças laranjas
-        } else if (piece === "w") {
-          fill(whiteOff); // Peças brancas
-        }
-        if (piece !== 0) {
-          let x = col * squareSize + squareSize / 2;
-          let y = row * squareSize + squareSize / 2;
-          ellipse(x, y, squareSize * 0.8);
+      }
+      for (let row = 6; row < 10; row++) {
+        for (let col = 0; col < 10; col++) {
+          if ((row + col) % 2 === 1) {
+            board[row][col] = { color: "white", king: false };
+          }
         }
       }
     }
-  }
 
-  resize() {
-    window.onresize = () => {
-      const sizeScreen =
-        window.innerWidth > window.innerHeight
-          ? window.innerHeight
-          : window.innerWidth;
-      boardSize = sizeScreen;
-      canvasSquare = sizeScreen;
-      squareSize = boardSize / 10;
-      setup();
+    // Inicializa as peças no tabuleiro
+    initializeBoard();
+
+    return {
+      getBoard() {
+        return board;
+      },
+      // Método para obter uma peça em uma posição específica
+      getPiece(row, col) {
+        return board[row][col];
+      },
+      // Método para mover uma peça de uma posição para outra
+      movePiece(fromRow, fromCol, toRow, toCol) {
+        const piece = board[fromRow][fromCol];
+        board[fromRow][fromCol] = null;
+        board[toRow][toCol] = piece;
+      },
+      // Método para promover uma peça a dama
+      promotePiece(row, col) {
+        if (board[row][col]) {
+          board[row][col].king = true;
+        }
+      },
     };
   }
-}
+
+  return {
+    getInstance() {
+      if (!instance) {
+        instance = createInstance();
+      }
+      return instance;
+    },
+  };
+})();
+
