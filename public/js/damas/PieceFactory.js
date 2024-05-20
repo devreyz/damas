@@ -1,15 +1,27 @@
+import EventEmitter from "/js/utils/EventEmitter.js";
+
 // CheckersPiece Factory Function
 export function PieceFactory() {
   // Function to create a new piece
-  function createPiece(color, row, column) {
+  function createPiece(color, row, column, isKing) {
     return {
       piece: {
         color: color, // 'white' or 'black'
-        king: false, // if it is a king piece or not
+        king: isKing, // if it is a king piece or not
         position: {
           row: row,
           column: column,
         },
+        possibleMovements: [
+          /*
+          {
+            moveTipe: SIMPLE || KING || CAPTURE || KING_CAPTURE,
+            lastPos: {x: 0, y:0},
+            nextPos: {x: 1, y:1},
+            capturePiece: Piece || null
+          }
+          */
+          ]
         // Other attributes can be added as needed
       },
 

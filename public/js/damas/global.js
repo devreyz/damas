@@ -31,15 +31,15 @@ let canvasSquare =
     : window.innerWidth;
 
 // Estado inicial do jogo
-let state = [
-  [0, "b", 0, "b", 0, "b", 0, "b", 0, "b"],
-  ["b", 0, "b", 0, "b", 0, "b", 0, "b", 0],
-  [0, "b", 0, "b", 0, "b", 0, "b", 0, "b"],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  ["w", 0, "w", 0, "w", 0, "w", 0, "w", 0],
-  [0, "w", 0, "w", 0, "w", 0, "w", 0, "w"],
-  ["w", 0, "w", 0, "w", 0, "w", 0, "w", 0],
+let gameState = [
+  [null, "b", null, "b", null, "b", null, "b", null, "b"],
+  ["b", null, "b", null, "b", null, "b", null, "b", null],
+  [null, "b", null, "b", null, "b", null, "b", null, "b"],
+  [null, null, null, null, null, null, null, null, null, null],
+  [null, null, null, null, null, null, null, null, null, null],
+  [null, null, null, null, null, null, null, null, null, null],
+  [null, null, null, null, null, null, null, null, null, null],
+  ["w", null, "w", null, "w", null, "w", null, "w", null],
+  [null, "w", null, "w", null, "w", null, "w", null, "w"],
+  ["w", null, "w", null, "w", null, "w", null, "w", null],
 ];

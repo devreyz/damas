@@ -2,15 +2,16 @@ export const CheckersBoardFactory = (function () {
   // CheckersBoard Singleton Factory
   let instance; // Instância única do tabuleiro
 
-  function createInstance() {
+  function createInstance(state) {
     const board = [];
+    console.log(state)
 
     // Inicializa o tabuleiro 10x10
     for (let i = 0; i < 10; i++) {
       board[i] = new Array(10).fill(null);
     }
 
-    // Método para inicializar as peças no tabuleiro
+    // Metodo para inicializar as peças no tabuleiro
     function initializeBoard() {
       for (let row = 0; row < 4; row++) {
         for (let col = 0; col < 10; col++) {
@@ -55,9 +56,9 @@ export const CheckersBoardFactory = (function () {
   }
 
   return {
-    getInstance() {
+    getInstance(state) {
       if (!instance) {
-        instance = createInstance();
+        instance = createInstance(state);
       }
       return instance;
     },
