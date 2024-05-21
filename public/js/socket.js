@@ -29,7 +29,7 @@ export class SocketEvents {
         startCountdown(2000, "/game/?id=" + data.roomName);
       });
 
-
+     
       this.io.on("hi", callback => {
         callback("hello")
       })

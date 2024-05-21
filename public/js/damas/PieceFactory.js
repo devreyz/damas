@@ -1,14 +1,15 @@
-import EventEmitter from "/js/utils/EventEmitter.js";
+
 
 // CheckersPiece Factory Function
 export function PieceFactory() {
   // Function to create a new piece
-  function createPiece(color, row, column, isKing) {
+  function createPiece(color, row, column, isKing, state) {
     return {
       piece: {
         color: color, // 'white' or 'black'
         king: isKing, // if it is a king piece or not
         isSelected: false,
+        piecesState: state,
         position: {
           row: row,
           column: column,
@@ -43,6 +44,7 @@ export function PieceFactory() {
           color: this.piece.color,
           king: this.piece.king,
           position: this.piece.position,
+          isSelected: this.piece.isSelected,
           possibleMovements: this.piece.possibleMovements
         };
       },
@@ -55,6 +57,10 @@ export function PieceFactory() {
       // Method to get the current position of the piece
       getPosition() {
         return this.piece.position;
+      },
+
+      toggleSelect() {
+        this.piece.isSelected = !this.piece.isSelected;
       },
 
       // Method to set the position of the piece

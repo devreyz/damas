@@ -1,3 +1,5 @@
+
+
 function setup() {
   // put setup code here
   createCanvas(canvasSquare, canvasSquare);
@@ -35,15 +37,22 @@ function draw() {
 //Mapa de cliques do tabuleiro
 function mousePressed(event) {
   event.preventDefault()
-  
   let col = floor(mouseX / squareSize);
   let row = floor(mouseY / squareSize);
-
+  
   if (col >= 0 && col < 10 && row >= 0 && row < 10) {
     console.log(`Clique na casa: linha ${row}, coluna ${col}`);
-    let piece = game.state.getPiecePos(row, col)
+    let piece = game.state.getPiece(row, col)
+    
     if (piece !== null) {
-      console.log(piece);
+      game.action({
+        ACTION: "TILE_CLICKED",
+        pos: {
+          row: row,
+          col: col
+        },
+        piece: piece
+      })
       // Adicione aqui a lógica para selecionar ou mover a peça
     }
   }

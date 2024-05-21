@@ -15,19 +15,19 @@ export const GameStateFactory = (function () {
         row.forEach((item, x) => {
           switch (item) {
             case "w":
-              state[y][x] = createPieceFactory.createPiece("white", x, y, false);
+              state[y][x] = createPieceFactory.createPiece("white", x, y, false, state);
               break;
               
             case "W":
-              state[y][x] = createPieceFactory.createPiece("white", x, y, true);
+              state[y][x] = createPieceFactory.createPiece("white", x, y, true, state);
               break;
               
             case "b":
-              state[y][x] = createPieceFactory.createPiece("black", x, y, false);
+              state[y][x] = createPieceFactory.createPiece("black", x, y, false, state);
               break;
               
             case "B":
-              state[y][x] = createPieceFactory.createPiece("black", x, y, true);
+              state[y][x] = createPieceFactory.createPiece("black", x, y, true, state);
               break;
               
             default:
@@ -45,7 +45,7 @@ export const GameStateFactory = (function () {
         return state;
       },
       // Método para obter uma peça em uma posição específica
-      getPiecePos(row, col) {
+      getPiece(row, col) {
         return state[row][col];
       },
       // Método para mover uma peça de uma posição para outra
