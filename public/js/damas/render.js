@@ -40,10 +40,10 @@ function mousePressed(event) {
   let row = floor(mouseY / squareSize);
 
   if (col >= 0 && col < 10 && row >= 0 && row < 10) {
-    alert(`Clique na casa: linha ${row}, coluna ${col}`);
-    let piece = gameState[row][col];
+    console.log(`Clique na casa: linha ${row}, coluna ${col}`);
+    let piece = game.state.getPiecePos(row, col)
     if (piece !== null) {
-      alert(`Peça na casa: ${piece}`);
+      console.log(piece);
       // Adicione aqui a lógica para selecionar ou mover a peça
     }
   }

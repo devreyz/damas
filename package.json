@@ -7,6 +7,7 @@
     "dev": "vite",
     "server": "nodemon server.js",
     "start": "pm2 start --node-args='--max-old-space-size=256' server.js --watch && pm2 monit",
+    "stop": "pm2 stop server",
     "tw": "npx tailwindcss -i ./public/assets/css/tailwind.css -o ./public/assets/css/styles.css --watch",
     "build": "vite build",
     "preview": "vite preview"

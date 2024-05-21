@@ -8,6 +8,7 @@ export function PieceFactory() {
       piece: {
         color: color, // 'white' or 'black'
         king: isKing, // if it is a king piece or not
+        isSelected: false,
         position: {
           row: row,
           column: column,
@@ -42,6 +43,7 @@ export function PieceFactory() {
           color: this.piece.color,
           king: this.piece.king,
           position: this.piece.position,
+          possibleMovements: this.piece.possibleMovements
         };
       },
 

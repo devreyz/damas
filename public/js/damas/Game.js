@@ -14,5 +14,3 @@ socketEvents.ping();
 // Example usage of the factory
 game.state = GameStateFactory.getInstance(gameState);
 game.board = CheckersBoardFactory.getInstance(game.state);
-
-console.log(game.state.getState());

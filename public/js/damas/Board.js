@@ -3,34 +3,10 @@ export const CheckersBoardFactory = (function () {
   let instance; // Instância única do tabuleiro
 
   function createInstance(state) {
-    const board = [];
+    const board = state
 
-    // Inicializa o tabuleiro 10x10
-    for (let i = 0; i < 10; i++) {
-      board[i] = new Array(10).fill(null);
-    }
-
-    // Metodo para inicializar as peças no tabuleiro
-    function initializeBoard() {
-      for (let row = 0; row < 4; row++) {
-        for (let col = 0; col < 10; col++) {
-          if ((row + col) % 2 === 1) {
-            board[row][col] = { color: "black", king: false };
-          }
-        }
-      }
-      for (let row = 6; row < 10; row++) {
-        for (let col = 0; col < 10; col++) {
-          if ((row + col) % 2 === 1) {
-            board[row][col] = { color: "white", king: false };
-          }
-        }
-      }
-    }
-
-    // Inicializa as peças no tabuleiro
-    initializeBoard();
-
+    
+  
     return {
       
       getBoard() {
