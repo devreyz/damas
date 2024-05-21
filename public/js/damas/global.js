@@ -1,12 +1,12 @@
 const username = document.cookie
   .split("; ")
-  .find((row) => row.startsWith("username="))
+  .find(row => row.startsWith("username="))
   .split("=")[1];
 
 const socketConfig = {
   auth: {
-    username: username,
-  },
+    username: username
+  }
 };
 
 const game = {};
@@ -41,5 +41,5 @@ let gameState = [
   [null, null, null, null, null, null, null, null, null, null],
   ["w", null, "w", null, "w", null, "w", null, "w", null],
   [null, "w", null, "w", null, "w", null, "w", null, "w"],
-  ["w", null, "w", null, "w", null, "w", null, "w", null],
+  ["w", null, "w", null, "w", null, "w", null, "w", null]
 ];

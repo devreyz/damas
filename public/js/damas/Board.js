@@ -4,7 +4,6 @@ export const CheckersBoardFactory = (function () {
 
   function createInstance(state) {
     const board = [];
-    console.log(state)
 
     // Inicializa o tabuleiro 10x10
     for (let i = 0; i < 10; i++) {
@@ -33,6 +32,7 @@ export const CheckersBoardFactory = (function () {
     initializeBoard();
 
     return {
+      
       getBoard() {
         return board;
       },

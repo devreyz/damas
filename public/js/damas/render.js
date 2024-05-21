@@ -1,10 +1,7 @@
-
-
 function setup() {
   // put setup code here
   createCanvas(canvasSquare, canvasSquare);
 }
-console.log("ola")
 
 function draw() {
   background(brown); // Background marrom
@@ -31,6 +28,23 @@ function draw() {
         let y = row * squareSize + squareSize / 2;
         ellipse(x, y, squareSize * 0.8);
       }
+    }
+  }
+}
+
+//Mapa de cliques do tabuleiro
+function mousePressed(event) {
+  event.preventDefault()
+  
+  let col = floor(mouseX / squareSize);
+  let row = floor(mouseY / squareSize);
+
+  if (col >= 0 && col < 10 && row >= 0 && row < 10) {
+    alert(`Clique na casa: linha ${row}, coluna ${col}`);
+    let piece = gameState[row][col];
+    if (piece !== null) {
+      alert(`Peça na casa: ${piece}`);
+      // Adicione aqui a lógica para selecionar ou mover a peça
     }
   }
 }
