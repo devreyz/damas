@@ -1,18 +1,16 @@
-
-
 // CheckersPiece Factory Function
 export function PieceFactory() {
   // Function to create a new piece
-  function createPiece(color, row, column, isKing, state) {
+  function createPiece(color, column, row, isKing, state) {
     return {
+      id: crypto.randomUUID(),
       piece: {
-        color: color, // 'white' or 'black'
-        king: isKing, // if it is a king piece or not
+        color: String(color), // 'white' or 'black'
+        king: Boolean(isKing), // if it is a king piece or not
         isSelected: false,
-        piecesState: state,
         position: {
           row: row,
-          column: column,
+          col: column,
         },
         possibleMovements: [
           /*
@@ -23,14 +21,14 @@ export function PieceFactory() {
             capturePiece: Piece || null
           }
           */
-          ]
+        ],
         // Other attributes can be added as needed
       },
 
       // Method to move the piece
       move(newRow, newColumn) {
         this.piece.position.row = newRow;
-        this.piece.position.column = newColumn;
+        this.piece.position.col = newColumn;
       },
 
       // Method to promote the piece to king
@@ -39,13 +37,16 @@ export function PieceFactory() {
       },
 
       // Method to get piece information
-      getInfo() {
+      getInfo(prop) {
+        if (prop) {
+          return this.piece[prop];
+        }
         return {
           color: this.piece.color,
           king: this.piece.king,
           position: this.piece.position,
           isSelected: this.piece.isSelected,
-          possibleMovements: this.piece.possibleMovements
+          possibleMovements: this.piece.possibleMovements,
         };
       },
 
@@ -64,16 +65,58 @@ export function PieceFactory() {
       },
 
       // Method to set the position of the piece
-      setPosition(row, column) {
+      setPosition(row, col) {
         this.piece.position.row = row;
-        this.piece.position.column = column;
+        this.piece.position.column = col;
+      },
+      findPossiblesMoves(state) {
+        const piece = this;
+        let { color, king, possibleMovements } = this.piece;
+        let row = this.piece.position.row;
+        let col = this.piece.position.col;
+        const turn = game.state.turn;
+
+        possibleMovements.push(...calculatePossiblesMoves(1, 1));
+        possibleMovements.push(...calculatePossiblesMoves(-1, 1));
+        possibleMovements.push(...calculatePossiblesMoves(-1, -1));
+        possibleMovements.push(...calculatePossiblesMoves(1, -1));
+
+        function calculatePossiblesMoves(x, y) {
+          let moves = [];
+          let newRow = row + y;
+          let newCol = col + x;
+          if (
+            newRow >= 0 &&
+            newRow < 10 &&
+            newCol >= 0 &&
+            newCol < 10 &&
+            color === turn
+          ) {
+            if (state[newRow][newCol] === null) {
+              //console.log({ msg: "Livre", newRow, newCol });
+              moves.push({ row: newRow, col: newCol });
+            } else {
+              if (state[newRow][newCol].piece.color !== color) {
+                //console.log({ msg: "Inimigo", newRow, newCol });
+              } else {
+                //console.log({ msg: "Amigo", newRow, newCol });
+              }
+            }
+          }
+          // console.table({
+          //   row,
+          //   col,
+          //   newRow,
+          //   newCol,
+          // });
+          return moves;
+        }
+        //console.log(state[newRow][newCol].piece.color);
       },
     };
   }
-
   // Public interface of the factory
   return {
     createPiece: createPiece,
   };
 }
-

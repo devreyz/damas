@@ -6,37 +6,46 @@ import EventEmitter from "/js/utils/EventEmitter.js";
 const io = new Socket(username).init(socketConfig); // username e socketConfig variavel global vindo do global.js
 const socketEvents = new SocketEvents(io, username);
 
+const btnToggleTurn = document.getElementById("toggleTurn");
+
 socketEvents.connect();
 socketEvents.ping();
 
 // Example usage of the factory
+const stateOptions = {
+  turn: "black",
+  playerColor: "black",
+};
 game.state = GameStateFactory.getInstance(gameState);
 game.board = CheckersBoardFactory.getInstance(game.state);
-
-
-game.boardPressed = args => {
+game.state.setStateOptions(stateOptions);
+game.state.findAllPossiblesPiecesMoves();
+game.boardPressed = (args) => {
   const { mouseX, mouseY } = args;
-  
+
   //const mouseX = args.mouseX
   // const mouseY = args.mouseY
   let col = floor(mouseX / squareSize);
   let row = floor(mouseY / squareSize);
 
   if (col >= 0 && col < 10 && row >= 0 && row < 10) {
+    let item = game.state.getPiece(row, col);
     
-    let piece = game.state.getPiece(row, col);
-    
-    if (piece !== null) {
-      piece.toggleSelect()
-      console.log({
-        ACTION: "TILE_CLICKED",
-        pos: {
-          row: row,
-          col: col
-        },
-        piece: piece
-      });
-      // Adicione aqui a lógica para selecionar ou mover a peça
+    if (item !== null) {
+      game.state.toggleSelectedPiece(item, game.state);
+      console.log("Movimentos possiveis");
+      console.table(item.piece.possibleMovements);
+    }else if (game.state.selectedPiece) {
+      
     }
   }
 };
+
+btnToggleTurn.onclick = () => game.state.toggleTurn();
+
+EventEmitter.on("IS_NOT_YOUR_TURN", (data) => {
+  alert(data.msg);
+});
+EventEmitter.on("IS_NOT_YOUR_PIECE", (data) => {
+  alert(data.msg);
+});
