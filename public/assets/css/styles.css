@@ -1450,16 +1450,8 @@ select {
   top: 0.5rem;
 }
 
-.isolate {
-  isolation: isolate;
-}
-
 .z-50 {
   z-index: 50;
-}
-
-.m-1 {
-  margin: 0.25rem;
 }
 
 .mx-6 {
@@ -1604,10 +1596,6 @@ select {
 
 .flex-1 {
   flex: 1 1 0%;
-}
-
-.shrink {
-  flex-shrink: 1;
 }
 
 .grow {
@@ -2170,14 +2158,6 @@ select {
           backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
 }
 
-.transition {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-
 body {
   -webkit-user-select: none;
      -moz-user-select: none;
@@ -2331,7 +2311,7 @@ canvas {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
   border-width: 1px;
   --tw-bg-opacity: 1;
-  background-color: rgb(15 23 42 / var(--tw-bg-opacity));
+  background-color: rgb(69 26 3 / var(--tw-bg-opacity));
   padding: 1rem;
 }
 

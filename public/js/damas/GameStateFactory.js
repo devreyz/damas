@@ -41,6 +41,7 @@ export const GameStateFactory = (function () {
     initializeState();
     
     return {
+      selectedPiece: null,
       getState() {
         return state;
       },
