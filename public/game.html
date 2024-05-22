@@ -13,7 +13,8 @@
 </head>
 
 <body class="fixed max-h-screen ">
-  <div class="fixed flex gap-3 items-center  top-0 left-0 text-lg z-50 bg-slate-900 w-full px-3 justify-end py-2">
+  <div id="notification-container" class="fixed top-0 left-0 m-4 z-50"></div>
+  <div class="fixed flex gap-3 items-center  top-0 left-0 text-lg z-40 bg-slate-900 w-full px-3 justify-end py-2">
 
     <span id="turnView" class="bg-orange-400 rounded-full w-6 h-6"> </span>
 
@@ -26,14 +27,15 @@
   </div>
 
 
-  
-  
+
+
+
   <script src="/js/utils/p5.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/damas/global.js"></script>
   <script src="/js/damas/render.js"></script>
   <script src="/js/damas/Game.js" type="module"></script>
-  
+
 
 </body>
 

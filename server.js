@@ -94,11 +94,30 @@ class App {
         // Configura o evento para obter usuários online
         cd(Object.values(this.connections));
       });
-      
-      socket.on('listRooms', callback => {
+
+      socket.on("listRooms", (callback) => {
         //console.log("Listar salas chamado")
-        callback(this.rooms)
-      })
+        callback(this.rooms);
+      });
+
+      socket.on("joinGameRoom", (roomName, callback) => {
+        socket.join(roomName);
+        console.log(`User joined room  ${roomName}`);
+        callback({ msg: "Entrou na sala" });
+      });
+
+      // Sair de uma sala específica
+      socket.on("leaveRoom", (room) => {
+        socket.leave(room);
+        console.log(`User left room ${room}`);
+      });
+
+      // Enviar mensagem para todos os sockets em uma sala
+      socket.on("enchangeMoveData", (room, message, callback) => {
+        console.log("Ola");
+        callback({msg: "re"})
+        io.to(room).emit("receiveMessage", message);
+      });
 
       socket.on("game", (data, callback) => {
         // Configura o evento para iniciar um jogo
@@ -125,8 +144,7 @@ class App {
                 this.rooms[roomName] = {
                   [usernameFrom]: playerFrom,
                   [usernameTo]: playerTo,
-                  turn: null
-                  
+                  turn: null,
                 };
               } else {
                 callback(false);
@@ -136,7 +154,6 @@ class App {
       });
 
       socket.on("disconnect", () => {
-        console.log(username);
         if (this.connections[username]) {
           // Configura o evento para quando um usuário se desconecta
           try {
@@ -156,7 +173,6 @@ class App {
                       console.log("Usuario removido: " + username);
                     } else {
                       console.log(res);
-                      
                     }
                   });
               }

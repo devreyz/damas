@@ -1,3 +1,4 @@
+import { showNotification } from "../components/NotifyCenter.js";
 import { CheckersBoardFactory } from "./Board.js";
 import { GameStateFactory } from "./GameStateFactory.js";
 import { Socket, SocketEvents } from "/js/socket.js";
@@ -8,8 +9,15 @@ const socketEvents = new SocketEvents(io, username);
 
 const btnToggleTurn = document.getElementById("toggleTurn");
 
+
+
+
+
+
 socketEvents.connect();
 socketEvents.ping();
+socketEvents.joinGameRoom(roomId)
+socketEvents.listRooms()
 
 // Example usage of the factory
 const stateOptions = {
@@ -30,22 +38,29 @@ game.boardPressed = (args) => {
 
   if (col >= 0 && col < 10 && row >= 0 && row < 10) {
     let item = game.state.getPiece(row, col);
-    
+
     if (item !== null) {
+      //console.log(item);
       game.state.toggleSelectedPiece(item, game.state);
-      console.log("Movimentos possiveis");
-      console.table(item.piece.possibleMovements);
+      //console.log("Movimentos possiveis");
     } else if (game.state.selectedPiece) {
-      console.log(game.state)
-      game.state.movePiece(game.state, row, col)
+      
+        //console.log(game.state.selectedPiece.getPosition())
+        game.state.movePiece(game.state, row, col);
+        //console.log(game.state.selectedPiece?.getInfo("possibleMovements"));
+      
     }
   }
 };
 
-btnToggleTurn.ontouchstart = (event) => game.state.toggleTurn()
+btnToggleTurn.onmousedown = (event) => game.state.toggleTurn();
 EventEmitter.on("IS_NOT_YOUR_TURN", (data) => {
-  alert(data.msg);
+  showNotification(data.msg);
 });
 EventEmitter.on("IS_NOT_YOUR_PIECE", (data) => {
-  alert(data.msg);
+  showNotification(data.msg);
+  socketEvents.enchangeMovedata(roomId, "Vai que da")
+});
+EventEmitter.on("INVALID_MOVE", (data) => {
+  showNotification(data.msg);
 });

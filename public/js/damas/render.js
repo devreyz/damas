@@ -1,6 +1,16 @@
+let imgKing;
+let posAtual;
+let posAlvo;
+let velocidade = 2; // Velocidade de movimento constante
+
+function preload() {
+  imgKing = loadImage("/assets/img/coroa.png");
+}
 function setup() {
   // put setup code here
-  createCanvas(canvasSquare, canvasSquare);
+  canvas = createCanvas(canvasSquare, canvasSquare);
+  posAtual = createVector(10, 10);
+  posAlvo = createVector(50, 50);
 }
 
 function draw() {
@@ -17,13 +27,26 @@ function draw() {
       } else {
         fill(white); // Quadrados escuros
       }
-      stroke("#000000")
+      stroke("#000000");
       rect(col * squareSize, row * squareSize, squareSize, squareSize);
 
       // Desenha as peças
       if (item) {
         const piece = item;
-        const { color, pos, isSelected } = piece.getInfo();
+        const { color, king, position, isSelected } = piece.getInfo();
+        // if (position.row !== item.piece.lastPosition.row) {
+        //   // Calcular a direção da transição
+        //   let direcao = p5.Vector.sub(posAlvo, posAtual).normalize();
+
+        //   // Multiplicar a direção pela velocidade para obter o deslocamento
+        //   let deslocamento = direcao.mult(velocidade);
+
+        //   // Atualizar a posição atual com o deslocamento
+        //   posAtual.add(deslocamento);
+
+        //   // Desenhar um círculo na posição atual
+        //   ellipse(posAtual.x, posAtual.y, 20, 20);
+        // }
 
         if (color === "black") {
           fill(orangeLighter); // Peças laranjas
@@ -32,11 +55,29 @@ function draw() {
         }
         let x = col * squareSize + squareSize / 2;
         let y = row * squareSize + squareSize / 2;
-          
-        if (isSelected) {
-          fill("#00ff00")
-        }
+
+        if (king) fill(kingDark);
+        if (isSelected) fill("#00ff00");
+        
+        
         ellipse(x, y, squareSize * 0.8);
+        if (king) {
+          image(
+            imgKing,
+            x - squareSize / 4,
+            y - squareSize / 4,
+            squareSize / 2,
+            squareSize / 2
+          );
+        }
+
+        fill(0);
+        textSize(14);
+        text(
+          `x: ${position.column} - y ${position.row}`,
+          col * squareSize,
+          row * squareSize + squareSize / 2
+        );
       }
     });
   });
@@ -45,7 +86,9 @@ function draw() {
 //Mapa de cliques do tabuleiro
 function mousePressed(event) {
   game.boardPressed({ mouseX, mouseY });
-  event.preventDefault();
+  if (event.target === canvas.elt) {
+    event.preventDefault();
+  }
 }
 
 window.onresize = () => {

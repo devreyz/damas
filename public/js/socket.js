@@ -28,16 +28,18 @@ export class SocketEvents {
       this.io.on("initgame", (data) => {
         startCountdown(2000, "/game/?id=" + data.roomName);
       });
-
-     
-      this.io.on("hi", callback => {
-        callback("hello")
-      })
+      // Receber mensagens da sala
+      this.io.on("receiveMessage", (message) => {
+        console.log("Message from room:", message);
+      });
+      this.io.on("hi", (callback) => {
+        callback("hello");
+      });
 
       document.addEventListener("visibilitychange", () => {
         if (!document.hidden) {
           // Verifica se a página não está oculta
-          this.io.emit("refreshsocketid")
+          this.io.emit("refreshsocketid");
         }
       });
 
@@ -54,10 +56,21 @@ export class SocketEvents {
       console.log("Reconectando");
     });
   }
-  listRooms(){
-    this.io.emit("listRooms", rooms => {
-        console.log(rooms)
-      })
+  listRooms() {
+    this.io.emit("listRooms", (rooms) => {
+      console.log(rooms);
+    });
+  }
+  joinGameRoom(roomName) {
+    this.io.emit("joinGameRoom", roomName, (data) => {
+      console.log(data);
+    });
+  
+  }
+  enchangeMovedata(roomName, message) {
+    this.io.emit("enchangeMovedata", roomName, message, (data) => {
+      console.log(data);
+    });
   }
   desconect() {}
   ping() {

@@ -67,6 +67,9 @@ export const GameStateFactory = (function () {
           this.turn === "black"
             ? "bg-orange-400 rounded-full w-6 h-6"
             : "bg-white rounded-full w-6 h-6";
+        this.findAllPossiblesPiecesMoves()
+        if(this.selectedPiece)this.selectedPiece.piece.isSelected = false
+        this.selectedPiece = null
       },
       setStateOptions(options) {
         this.turn = options.turn;
@@ -93,11 +96,11 @@ export const GameStateFactory = (function () {
         } else {
           if (piece.getInfo("color") === this.playerColor) {
             EventEmitter.emit("IS_NOT_YOUR_TURN", {
-              msg: "Ainda não e sua vez!"
+              msg: "Ainda não e sua vez!",
             });
           } else {
             EventEmitter.emit("IS_NOT_YOUR_PIECE", {
-              msg: "Está peça pertence ao outro jogador!"
+              msg: "Está peça pertence ao outro jogador!",
             });
           }
         }
@@ -108,10 +111,23 @@ export const GameStateFactory = (function () {
       },
       // Método para mover uma peça de uma posição para outra
       movePiece(state, newRow, newCol) {
-        const { row, col } = this.selectedPiece.getInfo("position");
-
-        state.state[newRow][newCol] = state.state[row][col];
-        state.state[row][col] = null;
+        const { row, column } = this.selectedPiece.getInfo("position");
+        const moves = this.selectedPiece.getInfo("possibleMovements");
+        
+        const verifyTurn = this.turn === this.playerColor
+        const verifyMoves = moves && moves.some((item) => item.col === newCol && item.row === newRow)
+        if (verifyTurn && verifyMoves) {
+          //console.log(this.selectedPiece);
+          this.selectedPiece.move(newRow, newCol);
+          this.state[newRow][newCol] = state.state[row][column];
+          this.state[row][column] = null;
+          this.findAllPossiblesPiecesMoves();
+          this.toggleTurn()
+        } else {
+          EventEmitter.emit("INVALID_MOVE", {
+            msg: "Jogada inválida!",
+          });
+        }
       },
       // Método para promover uma peça a dama
       promotePiece(row, col) {
@@ -120,13 +136,16 @@ export const GameStateFactory = (function () {
         }
       },
       findAllPossiblesPiecesMoves() {
+        console.log('Iniciando Busca!');
+
         // Método para encontrar todas as possíveis posições de movimento de uma peça
         this.state.forEach((row, y) => {
           row.forEach((piece, x) => {
             if (piece) piece.findPossiblesMoves(this.state);
           });
         });
-      }
+        console.log("Busca Finalizada!")
+      },
     };
   }
 
@@ -136,6 +155,6 @@ export const GameStateFactory = (function () {
         instance = createInstance(state);
       }
       return instance;
-    }
+    },
   };
 })();
