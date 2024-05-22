@@ -35,14 +35,14 @@ game.boardPressed = (args) => {
       game.state.toggleSelectedPiece(item, game.state);
       console.log("Movimentos possiveis");
       console.table(item.piece.possibleMovements);
-    }else if (game.state.selectedPiece) {
-      
+    } else if (game.state.selectedPiece) {
+      console.log(game.state)
+      game.state.movePiece(game.state, row, col)
     }
   }
 };
 
-btnToggleTurn.onclick = () => game.state.toggleTurn();
-
+btnToggleTurn.ontouchstart = (event) => game.state.toggleTurn()
 EventEmitter.on("IS_NOT_YOUR_TURN", (data) => {
   alert(data.msg);
 });

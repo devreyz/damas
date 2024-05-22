@@ -20,19 +20,12 @@ export const GameStateFactory = (function () {
                 "white",
                 x,
                 y,
-                false,
-                
+                false
               );
               break;
 
             case "W":
-              state[y][x] = createPieceFactory.createPiece(
-                "white",
-                x,
-                y,
-                true,
-                
-              );
+              state[y][x] = createPieceFactory.createPiece("white", x, y, true);
               break;
 
             case "b":
@@ -40,25 +33,17 @@ export const GameStateFactory = (function () {
                 "black",
                 x,
                 y,
-                false,
-                
+                false
               );
               break;
 
             case "B":
-              state[y][x] = createPieceFactory.createPiece(
-                "black",
-                x,
-                y,
-                true,
-                
-              );
+              state[y][x] = createPieceFactory.createPiece("black", x, y, true);
               break;
 
             default:
               state[y][x] = null;
           }
-        
         });
       });
     }
@@ -77,6 +62,7 @@ export const GameStateFactory = (function () {
       },
       toggleTurn() {
         this.turn = this.turn === "black" ? "white" : "black";
+        this.playerColor = this.playerColor === "black" ? "white" : "black"; //REMOVER ESTA LINHA DEPOIS
         document.getElementById("turnView").classList =
           this.turn === "black"
             ? "bg-orange-400 rounded-full w-6 h-6"
@@ -105,15 +91,13 @@ export const GameStateFactory = (function () {
             }
           }
         } else {
-          
-
           if (piece.getInfo("color") === this.playerColor) {
             EventEmitter.emit("IS_NOT_YOUR_TURN", {
-              msg: "Ainda não e sua vez!",
+              msg: "Ainda não e sua vez!"
             });
           } else {
             EventEmitter.emit("IS_NOT_YOUR_PIECE", {
-              msg: "Está peça pertence ao outro jogador!",
+              msg: "Está peça pertence ao outro jogador!"
             });
           }
         }
@@ -123,10 +107,11 @@ export const GameStateFactory = (function () {
         return state[row][col];
       },
       // Método para mover uma peça de uma posição para outra
-      movePiece(fromRow, fromCol, toRow, toCol) {
-        const piece = state[fromRow][fromCol];
-        state[fromRow][fromCol] = null;
-        state[toRow][toCol] = piece;
+      movePiece(state, newRow, newCol) {
+        const { row, col } = this.selectedPiece.getInfo("position");
+
+        state.state[newRow][newCol] = state.state[row][col];
+        state.state[row][col] = null;
       },
       // Método para promover uma peça a dama
       promotePiece(row, col) {
@@ -138,9 +123,9 @@ export const GameStateFactory = (function () {
         // Método para encontrar todas as possíveis posições de movimento de uma peça
         this.state.forEach((row, y) => {
           row.forEach((piece, x) => {
-            if(piece)piece.findPossiblesMoves(this.state)
+            if (piece) piece.findPossiblesMoves(this.state);
           });
-        })
+        });
       }
     };
   }
@@ -151,6 +136,6 @@ export const GameStateFactory = (function () {
         instance = createInstance(state);
       }
       return instance;
-    },
+    }
   };
 })();

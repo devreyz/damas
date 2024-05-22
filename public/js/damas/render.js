@@ -44,8 +44,8 @@ function draw() {
 
 //Mapa de cliques do tabuleiro
 function mousePressed(event) {
-  event.preventDefault();
   game.boardPressed({ mouseX, mouseY });
+  event.preventDefault();
 }
 
 window.onresize = () => {
