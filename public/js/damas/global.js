@@ -25,6 +25,8 @@ const white = "#FFFFFF"; // Branco
 const brown = "#8B4513"; // Marrom
 const gray = "#D3D3D3"; // Cinza
 const orangeLighter = "#FFD700"; // Laranja mais claro
+const dark = "#123400"
+const light = "#d3d3d3"
 const whiteOff = "#FFFFF0"; // Branco off-white
 const kingDark = "#FFA555";
 

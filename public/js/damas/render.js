@@ -23,11 +23,13 @@ function draw() {
     arr.forEach((item, col) => {
       // Desenha o quadrado do tabuleiro
       if ((row + col) % 2 === 0) {
-        fill(orangeLight); // Quadrados claros
+        fill(light); // Quadrados escuros
       } else {
-        fill(white); // Quadrados escuros
+        fill(dark); // Quadrados claros
       }
       stroke("#000000");
+      
+      
       rect(col * squareSize, row * squareSize, squareSize, squareSize);
 
       // Desenha as peças
@@ -56,7 +58,7 @@ function draw() {
         let x = col * squareSize + squareSize / 2;
         let y = row * squareSize + squareSize / 2;
 
-        if (king) fill(kingDark);
+        //if (king) fill(kingDark);
         if (isSelected) fill("#00ff00");
         
         
@@ -71,13 +73,13 @@ function draw() {
           );
         }
 
-        fill(0);
-        textSize(14);
-        text(
-          `x: ${position.column} - y ${position.row}`,
-          col * squareSize,
-          row * squareSize + squareSize / 2
-        );
+        // fill("#ffddff");
+        // textSize(14);
+        // text(
+        //   `x: ${position.column} - y ${position.row}`,
+        //   col * squareSize + 5,
+        //   row * squareSize + squareSize / 2
+        // );
       }
     });
   });

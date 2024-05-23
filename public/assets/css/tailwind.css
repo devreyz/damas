@@ -17,7 +17,7 @@ body {
   @apply text-orange-400;
 }
 #ping {
-  @apply transition-colors duration-150;
+  @apply transition-colors duration-150 w-12;
 }
 .ping-excellent {
   @apply text-cyan-500;

@@ -1,5 +1,6 @@
 import { PieceFactory } from "./PieceFactory.js";
 import EventEmitter from "/js/utils/EventEmitter.js";
+import { message } from "/js/utils/messages.js";
 
 export const GameStateFactory = (function () {
   // CheckersBoard Singleton Factory
@@ -53,27 +54,43 @@ export const GameStateFactory = (function () {
 
     return {
       turn: undefined,
+      ia: false,
+      iaTurn: false,
       playerColor: undefined,
       state: state,
-
+      allPossibleMovesInTurn: [],
       selectedPiece: null,
+      allPieces: {
+        black: 0,
+        white: 0
+      },
       getState() {
         return state;
       },
       toggleTurn() {
         this.turn = this.turn === "black" ? "white" : "black";
-        this.playerColor = this.playerColor === "black" ? "white" : "black"; //REMOVER ESTA LINHA DEPOIS
+        this.iaTurn = !this.iaTurn;
+        //this.playerColor = this.playerColor === "black" ? "white" : "black"; //REMOVER ESTA LINHA DEPOIS
         document.getElementById("turnView").classList =
           this.turn === "black"
-            ? "bg-orange-400 rounded-full w-6 h-6"
-            : "bg-white rounded-full w-6 h-6";
-        this.findAllPossiblesPiecesMoves()
-        if(this.selectedPiece)this.selectedPiece.piece.isSelected = false
-        this.selectedPiece = null
+            ? "bg-orange-400 animate-bounce rounded-full w-6 h-6"
+            : "bg-white animate-bounce rounded-full w-6 h-6";
+        this.findAllPossiblesPiecesMoves();
+        this.removeSelectedPiece();
       },
       setStateOptions(options) {
         this.turn = options.turn;
         this.playerColor = options.playerColor;
+      },
+      setSelectedPiece(piece) {
+        if (this.selectedPiece) this.selectedPiece.piece.isSelected = false;
+        this.selectedPiece = piece;
+      },
+      removeSelectedPiece() {
+        if (this.selectedPiece) {
+          this.selectedPiece.piece.isSelected = false;
+          this.selectedPiece = null;
+        }
       },
       toggleSelectedPiece(piece, state) {
         if (
@@ -81,26 +98,31 @@ export const GameStateFactory = (function () {
           piece.getInfo("color") === this.playerColor
         ) {
           if (state.selectedPiece === null) {
-            state.selectedPiece = piece;
-            piece.toggleSelect();
+            this.setSelectedPiece(piece);
+            //state.selectedPiece = piece;
+            //piece.toggleSelect();
           } else {
             if (state.selectedPiece === piece) {
-              state.selectedPiece.toggleSelect();
-              state.selectedPiece = null;
+              this.removeSelectedPiece();
+              // state.selectedPiece.toggleSelect();
+              //state.selectedPiece = null;
             } else {
-              state.selectedPiece.toggleSelect();
-              piece.toggleSelect();
-              state.selectedPiece = piece;
+              this.removeSelectedPiece();
+              this.setSelectedPiece(piece);
+              //state.selectedPiece.toggleSelect();
+              //piece.toggleSelect();
+              //state.selectedPiece = piece;
             }
           }
         } else {
+          console.log(piece.getInfo());
           if (piece.getInfo("color") === this.playerColor) {
             EventEmitter.emit("IS_NOT_YOUR_TURN", {
-              msg: "Ainda não e sua vez!",
+              msg: message("notYourTurn")
             });
           } else {
             EventEmitter.emit("IS_NOT_YOUR_PIECE", {
-              msg: "Está peça pertence ao outro jogador!",
+              msg: "Está peça pertence ao outro jogador!"
             });
           }
         }
@@ -109,23 +131,52 @@ export const GameStateFactory = (function () {
       getPiece(row, col) {
         return state[row][col];
       },
+      capturePiece(row, col) {
+        //  console.log(row,col)
+        this.state[row][col] = null;
+        this.allPieces[this.turn === "black" ? "white" : "black"]--;
+        //console.log(this.allPieces);
+      },
       // Método para mover uma peça de uma posição para outra
       movePiece(state, newRow, newCol) {
         const { row, column } = this.selectedPiece.getInfo("position");
         const moves = this.selectedPiece.getInfo("possibleMovements");
-        
-        const verifyTurn = this.turn === this.playerColor
-        const verifyMoves = moves && moves.some((item) => item.col === newCol && item.row === newRow)
-        if (verifyTurn && verifyMoves) {
+        const move = moves.find(
+          item => item.movePos.col === newCol && item.movePos.row === newRow
+        );
+        // console.log(move)
+        const verifyTurn = this.turn === this.playerColor;
+        const verifyMoves =
+          moves &&
+          moves.some(
+            item => item.movePos.col === newCol && item.movePos.row === newRow
+          );
+        if ((verifyTurn && verifyMoves) || (this.iaTurn && verifyMoves)) {
           //console.log(this.selectedPiece);
+          const test = state.state[row][column];
           this.selectedPiece.move(newRow, newCol);
           this.state[newRow][newCol] = state.state[row][column];
           this.state[row][column] = null;
+          // this.state[newRow][newCol] = test
+          if (move.isCapture) {
+            this.capturePiece(move.capturePiece.row, move.capturePiece.col);
+            //  console.log(move.capturePiece.row)
+            //throw new Error()
+          } else {
+            this.toggleTurn();
+          }
           this.findAllPossiblesPiecesMoves();
-          this.toggleTurn()
+          if (this.allPossibleMovesInTurn.length === 0) {
+            alert("Sem jogadas");
+            this.toggleTurn();
+          }
+
+          EventEmitter.emit("MOVE_MADE", {
+            msg: "Jogou"
+          });
         } else {
           EventEmitter.emit("INVALID_MOVE", {
-            msg: "Jogada inválida!",
+            msg: "Jogada inválida!"
           });
         }
       },
@@ -136,16 +187,18 @@ export const GameStateFactory = (function () {
         }
       },
       findAllPossiblesPiecesMoves() {
-        console.log('Iniciando Busca!');
-
         // Método para encontrar todas as possíveis posições de movimento de uma peça
+
+        game.state.allPossibleMovesInTurn = [];
         this.state.forEach((row, y) => {
           row.forEach((piece, x) => {
-            if (piece) piece.findPossiblesMoves(this.state);
+            if (piece) {
+              //alert(`err`)
+              piece.findPossiblesMoves(this.state);
+            }
           });
         });
-        console.log("Busca Finalizada!")
-      },
+      }
     };
   }
 
@@ -155,6 +208,6 @@ export const GameStateFactory = (function () {
         instance = createInstance(state);
       }
       return instance;
-    },
+    }
   };
 })();

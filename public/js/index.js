@@ -2,13 +2,13 @@ import { Socket, SocketEvents } from "/js/socket.js";
 
 const username = document.cookie
   .split("; ")
-  .find((row) => row.startsWith("username="))
+  .find(row => row.startsWith("username="))
   .split("=")[1];
 
 const socketConfig = {
   auth: {
-    username: username,
-  },
+    username: username
+  }
 };
 
 const io = new Socket(username).init(socketConfig);
@@ -29,7 +29,7 @@ btnListRooms.onclick = () => listarSalas();
 function listarSalas() {
   socketEvents.listRooms();
 }
-socketEvents.joinGameRoom()
+socketEvents.joinGameRoom();
 // Função para exibir um alerta quando a página volta ao foco
 function handlePageFocus() {
   //console.log("A página está de volta ao foco!");

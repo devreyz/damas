@@ -58,12 +58,12 @@ export class SocketEvents {
   }
   listRooms() {
     this.io.emit("listRooms", (rooms) => {
-      console.log(rooms);
+    
     });
   }
   joinGameRoom(roomName) {
     this.io.emit("joinGameRoom", roomName, (data) => {
-      console.log(data);
+      
     });
   
   }

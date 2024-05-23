@@ -1,12 +1,12 @@
 // Função para mostrar notificação
-export function showNotification(message) {
+export function showNotification(data) {
   const container = document.getElementById("notification-container");
 
   // Cria o elemento da notificação
   const notification = document.createElement("div");
   notification.className =
-    "bg-red-400/80 backdrop-blur-md w-fit text-white px-4 py-1 rounded shadow-lg mb-4 transition-opacity duration-500";
-  notification.innerText = message;
+    `${data.color === "black" ? "bg-zinc-800/80": "bg-orange-800/80"} backdrop-blur-md w-fit text-white px-4 py-1 rounded shadow-lg mb-4 transition-opacity duration-500`;
+  notification.innerText = data.msg;
 
   // Adiciona a notificação ao container
 const firstChild = container.firstChild;
@@ -22,5 +22,5 @@ container.insertBefore(notification, firstChild);
     setTimeout(() => {
       notification.remove(); // Remove o elemento do DOM após a transição
     }, 500); // Tempo da transição
-  }, 1500); // Tempo que a notificação fica visível
+  }, 500); // Tempo que a notificação fica visível
 }

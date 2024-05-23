@@ -3,7 +3,9 @@ export const CheckersBoardFactory = (function () {
   let instance; // Instância única do tabuleiro
 
   function createInstance(state) {
-    const board = {
+    
+    return {
+      state: game.state,
       colors: {
         // Definindo as cores
         lightTile: "#FFFFFF", // Laranja claro
@@ -15,12 +17,9 @@ export const CheckersBoardFactory = (function () {
         gray: "#D3D3D3", // Cinza
         orangeLighter: "#FFD700", // Laranja mais claro
         whiteOff: "#FFFFF0" // Branco off-white
-      }
-    };
-
-    return {
-      state,
-      board
+      },
+      boardLength: game.state.getState().length
+    
     };
   }
 
