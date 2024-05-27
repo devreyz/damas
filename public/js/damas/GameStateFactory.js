@@ -85,6 +85,7 @@ export const GameStateFactory = (function () {
       setSelectedPiece(piece) {
         if (this.selectedPiece) this.selectedPiece.piece.isSelected = false;
         this.selectedPiece = piece;
+        piece.piece.isSelected = true
       },
       removeSelectedPiece() {
         if (this.selectedPiece) {
@@ -167,7 +168,7 @@ export const GameStateFactory = (function () {
           }
           this.findAllPossiblesPiecesMoves();
           if (this.allPossibleMovesInTurn.length === 0) {
-            alert("Sem jogadas");
+            //console.log("Sem jogadas");
             this.toggleTurn();
           }
 

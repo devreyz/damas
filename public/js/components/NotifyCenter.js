@@ -4,17 +4,16 @@ export function showNotification(data) {
 
   // Cria o elemento da notificação
   const notification = document.createElement("div");
-  notification.className =
-    `${data.color === "black" ? "bg-zinc-800/80": "bg-orange-800/80"} backdrop-blur-md w-fit text-white px-4 py-1 rounded shadow-lg mb-4 transition-opacity duration-500`;
+  notification.className = `${
+    data.color === "black" ? "bg-zinc-800/80" : "bg-orange-800/80"
+  } backdrop-blur-md w-fit text-white px-4 py-1 rounded shadow-lg mb-4 transition-opacity duration-500`;
   notification.innerText = data.msg;
 
   // Adiciona a notificação ao container
-const firstChild = container.firstChild;
+  const firstChild = container.firstChild;
 
-// Inserir o novo elemento antes do primeiro filho existente
-container.insertBefore(notification, firstChild);
-
-  //container.appendChild(notification);
+  // Inserir o novo elemento antes do primeiro filho existente
+  container.insertBefore(notification, firstChild);
 
   // Remove a notificação após 2 segundos
   setTimeout(() => {
@@ -22,5 +21,5 @@ container.insertBefore(notification, firstChild);
     setTimeout(() => {
       notification.remove(); // Remove o elemento do DOM após a transição
     }, 500); // Tempo da transição
-  }, 500); // Tempo que a notificação fica visível
+  }, 1000); // Tempo que a notificação fica visível
 }

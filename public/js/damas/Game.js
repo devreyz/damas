@@ -29,12 +29,10 @@ socketEvents.ping();
 socketEvents.joinGameRoom(roomId);
 socketEvents.listRooms();
 
-
-
 // Example usage of the factory
 const stateOptions = {
   turn: "black",
-  playerColor: "white"
+  playerColor: "black"
 };
 game.state = GameStateFactory.getInstance(gameState);
 game.board = CheckersBoardFactory.getInstance(game.state);
@@ -56,6 +54,8 @@ game.boardPressed = args => {
   }
 };
 
+//console.log(game.state)
+
 btnToggleTurn.onmousedown = event => game.state.toggleTurn();
 
 
@@ -63,8 +63,8 @@ const IA = IAFactory();
 
 const uai = IA.createIA("uai", {
   gameState: game.state,
-  pieceColor: "black",
-  qi: 1000
+  pieceColor: "white",
+  qi: 600
 });
 
 
@@ -72,13 +72,13 @@ const uai = IA.createIA("uai", {
 uai.on();
 uai.processMove({turn: game.state.turn, action: "INIT"})
 
-const yai = IA.createIA("yai", {
+const iai = IA.createIA("iai", {
   gameState: game.state,
-  pieceColor: "white",
-  qi: 1000
+  pieceColor: "black",
+  qi: 600
 });
 
 
 
-yai.on();
-yai.processMove({turn: game.state.turn, action: "INIT"})
+iai.on();
+iai.processMove({turn: game.state.turn, action: "INIT"})

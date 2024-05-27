@@ -53,7 +53,7 @@ function draw() {
         if (color === "black") {
           fill(orangeLighter); // Peças laranjas
         } else if (color === "white") {
-          fill(whiteOff); // Peças brancas
+        fill(whiteOff); // Peças brancas
         }
         let x = col * squareSize + squareSize / 2;
         let y = row * squareSize + squareSize / 2;

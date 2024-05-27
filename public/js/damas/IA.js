@@ -4,25 +4,23 @@ import { message } from "/js/utils/messages.js";
 export function IAFactory() {
   function createIA(name, { gameState, pieceColor, qi }) {
     const ia = {};
-
     ia.name = name;
     ia.gameState = gameState;
     gameState.ia = true;
-
     ia.pieceColor = pieceColor;
-    ia.qi = qi || 1;
+    ia.qi = qi || 1 ;
+    ia.qi = ia.qi/37
 
     ia.on = () => {
       EventEmitter.emit("IA_MESSAGE", {
         msg: `Olá sou ${ia.name} eu irei jogar com você!`,
         color: ia.pieceColor
       });
-
       // Ouvindo eventos de jogada
       EventEmitter.on("MOVE_MADE", data => {
         setTimeout(() => {
           ia.processMove(data);
-        }, 100);
+        }, 200);
       });
       setTimeout(() => {
         EventEmitter.emit("IA_MESSAGE", {
@@ -33,7 +31,6 @@ export function IAFactory() {
         });
       }, 2000);
     };
-
     ia.processMove = function (moveData) {
       const { turn, action } = moveData;
 
@@ -44,7 +41,6 @@ export function IAFactory() {
         }, 1000 / ia.qi);
       }
     };
-
     ia.makeMove = () => {
       setTimeout(() => {
         EventEmitter.emit("IA_MESSAGE", {
@@ -61,17 +57,15 @@ export function IAFactory() {
         }, 2000 / ia.qi);
       }, 3000 / ia.qi);
     };
-
     ia.getMove = () => {
       const moves = gameState.allPossibleMovesInTurn;
+      
       return moves[
         Math.floor(Math.random() * gameState.allPossibleMovesInTurn.length)
       ];
     };
-
     return ia;
   }
-
   // Public interface of the factory
   return {
     createIA: createIA
