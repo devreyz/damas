@@ -73,7 +73,6 @@ function mapAllMove(gameState, pieceCol, pieceRow, piece, config = {}) {
     const moves = [];
     directions.forEach((direction) => {
       if (king) {
-        
         for (let index = 1; index < gameState.length; index++) {
           const statePosition = getPositionState(
             matrix2D,
@@ -84,9 +83,12 @@ function mapAllMove(gameState, pieceCol, pieceRow, piece, config = {}) {
             false
           );
           if (statePosition === -1 || color === statePosition.target) {
-            break
+            break;
           } else {
-            if (color !== statePosition.target && statePosition.target !== null) {
+            if (
+              color !== statePosition.target &&
+              statePosition.target !== null
+            ) {
               const statePositionCapture = getPositionState(
                 matrix2D,
                 initRow,
@@ -96,47 +98,41 @@ function mapAllMove(gameState, pieceCol, pieceRow, piece, config = {}) {
                 true
               );
               if (statePositionCapture.target === null) {
-               moves.push(statePosition);
-              } 
-              break
-             
+                moves.push(statePosition);
+              }
+              break;
             } else {
               moves.push(statePosition);
             }
           }
-          
-          
         }
       } else {
         const statePosition = getPositionState(
-            matrix2D,
-            initRow,
-            initCol,
-            direction,
-            1,
-            false
-          );
-          if (statePosition === -1 || color === statePosition.target) {
-            
-          } else {
-            if (color !== statePosition.target && statePosition.target !== null) {
-              const statePositionCapture = getPositionState(
-                matrix2D,
-                initRow,
-                initCol,
-                direction,
-                1,
-                true
-              );
-              if (statePositionCapture.target === null) {
-               moves.push(statePosition);
-              } 
-              
-             
-            } else {
+          matrix2D,
+          initRow,
+          initCol,
+          direction,
+          1,
+          false
+        );
+        if (statePosition === -1 || color === statePosition.target) {
+        } else {
+          if (color !== statePosition.target && statePosition.target !== null) {
+            const statePositionCapture = getPositionState(
+              matrix2D,
+              initRow,
+              initCol,
+              direction,
+              1,
+              true
+            );
+            if (statePositionCapture.target === null) {
               moves.push(statePosition);
             }
+          } else {
+            moves.push(statePosition);
           }
+        }
       }
     });
     // console.log(moves);
@@ -148,24 +144,10 @@ function mapAllMove(gameState, pieceCol, pieceRow, piece, config = {}) {
       moves.push(moveObject);
   };
 
-  const mapMove = () => {
-
-  }
-
   const findMoves = () => {
-    
-        const moves = fidInAllDirection(
-          gameState,
-          pieceRow,
-          pieceCol,
-          false,
-          1,
-          1
-        );
-        console.log(moves);
-      
-    }
-  
+    const moves = fidInAllDirection(gameState, pieceRow, pieceCol, false, 1, 1);
+    console.log(moves);
+  };
 
   findMoves();
 }
