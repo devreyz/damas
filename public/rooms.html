@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atualização de Salas</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+
+    <!-- Navbar -->
+    <nav class="bg-blue-600 p-4 text-white">
+        <div class="container mx-auto">
+            <div class="flex justify-between items-center">
+                <h1 class="text-xl font-bold">Monitoramento de Salas</h1>
+                <ul class="flex space-x-4">
+                    <li><a href="#" class="hover:underline">Home</a></li>
+                    <li><a href="#" class="hover:underline">Sobre</a></li>
+                    <li><a href="#" class="hover:underline">Contato</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto mt-8 p-4 bg-white shadow-lg rounded-lg">
+        <h2 class="text-2xl font-bold mb-4">Status das Salas</h2>
+        <div id="roomsContainer" class="space-y-4">
+            <!-- Dados das salas serão inseridos aqui -->
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-blue-600 p-4 text-white mt-8">
+        <div class="container mx-auto text-center">
+            <p>© 2024 Monitoramento de Salas</p>
+        </div>
+    </footer>
+
+    <script>
+        // Função para obter e atualizar os dados das salas
+        async function updateRooms() {
+            try {
+                const response = await fetch('http://localhost:3000/allrooms');
+                const rooms = await response.json();
+                console.log(rooms)
+                const roomsContainer = document.getElementById('roomsContainer');
+                roomsContainer.innerHTML = '';
+
+                Object.keys(rooms).forEach(roomKey => {
+                    const room = rooms[roomKey];
+                    const roomDiv = document.createElement('div');
+                    roomDiv.className = 'p-4 bg-gray-100 rounded-lg shadow';
+
+                    const roomTitle = document.createElement('p');
+                    roomTitle.className = 'text-lg font-bold';
+                    roomTitle.textContent = `Sala: ${roomKey}`;
+
+                    const player5 = room.player5;
+                    const player5Div = document.createElement('div');
+                    player5Div.className = 'mt-2';
+                    player5Div.innerHTML = `<strong>Jogador 5:</strong> ${player5.username} - Conectado: ${player5.isConected}`;
+
+                    const player4 = room.player4;
+                    const player4Div = document.createElement('div');
+                    player4Div.className = 'mt-2';
+                    player4Div.innerHTML = `<strong>Jogador 4:</strong> ${player4.username} - Conectado: ${player4.isConected}`;
+
+                    const turnDiv = document.createElement('div');
+                    turnDiv.className = 'mt-2';
+                    turnDiv.innerHTML = `<strong>Turno:</strong> ${room.turn !== null ? room.turn : 'Nenhum'}`;
+
+                    roomDiv.appendChild(roomTitle);
+                    roomDiv.appendChild(player5Div);
+                    roomDiv.appendChild(player4Div);
+                    roomDiv.appendChild(turnDiv);
+                    roomsContainer.appendChild(roomDiv);
+                });
+            } catch (error) {
+                console.error('Erro ao obter os dados das salas:', error);
+            }
+        }
+
+        // Atualiza os dados das salas a cada segundo
+        setInterval(updateRooms, 1000);
+
+        // Chamada inicial para preencher os dados das salas
+        updateRooms();
+    </script>
+</body>
+</html>

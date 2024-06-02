@@ -2,7 +2,6 @@
 export function PieceFactory() {
   // Function to create a new piece
   function createPiece(color, column, row, isKing, state) {
-  
     return {
       id: crypto.randomUUID(),
       piece: {
@@ -59,7 +58,8 @@ export function PieceFactory() {
           lastPosition: this.piece.lastPosition,
           isSelected: this.piece.isSelected,
           possibleMovements: this.piece.possibleMovements,
-          inAlert: this.piece.inAlert
+          inAlert: this.piece.inAlert,
+          moveDirection: this.piece.moveDirection
         };
       },
 
@@ -82,118 +82,176 @@ export function PieceFactory() {
         this.piece.position.row = newRow;
         this.piece.position.column = newCol;
       },
-      findPossiblesMoves(state) {
-        const piece = this.piece;
-        piece.possibleMovements = [];
-        piece.inAlert = false;
-        let possibleMovements = [];
-        let { color, king } = piece;
-        
-        
-        let { row, column: col } = piece.position;
-        const turn = game.state.turn;
-        
 
-        possibleMovements.push(
-          ...calculatePossiblesMoves(col + 1, row + 1, 1, 1, false)
-        );
-        possibleMovements.push(
-          ...calculatePossiblesMoves(col - 1, row + 1, -1, 1, false)
-        );
-        possibleMovements.push(
-          ...calculatePossiblesMoves(col - 1, row - 1, -1, -1, false)
-        );
-        possibleMovements.push(
-          ...calculatePossiblesMoves(col + 1, row - 1, 1, -1, false)
-        );
+      // Função principal para mapear todos os movimentos possíveis de uma peça
+      mapAllMoves(gameState, pieceCol, pieceRow, piece, config = {}) {
+        // Desestruturação para obter o valor máximo de profundidade da configuração, padrão é 5
+        const { maxDepth = 3 } = config;
 
-        function calculatePossiblesMoves(
-          newCol,
-          newRow,
-          offSetCol,
-          offSetRow,
-          isCapture
-        ) {
-          let moves = [];
+        // Direções possíveis de movimento (diagonais)
+        const directions = [
+          { x: 1, y: 1 },
+          { x: 1, y: -1 },
+          { x: -1, y: 1 },
+          { x: -1, y: -1 }
+        ];
+
+        // Desestruturação para obter se a peça é um rei e sua cor
+        const { king, color, moveDirection } = piece;
+        //console.log(piece)
+
+        // Função para obter o estado de uma posição no tabuleiro
+        const getPositionState = (
+          matrix2D,
+          row,
+          col,
+          direction,
+          distance,
+          capture = false
+        ) => {
+          const offsetRow = (capture ? 1 + distance : distance) * direction.y;
+          const offsetCol = (capture ? 1 + distance : distance) * direction.x;
+
+          const newRow = row + offsetRow;
+          const newCol = col + offsetCol;
+
+          // Verifica se a nova posição está fora dos limites do tabuleiro
           if (
-            newRow >= 0 &&
-            newRow < 10 &&
-            newCol >= 0 &&
-            newCol < 10 &&
-            color === turn
+            newRow < 0 ||
+            newRow >= matrix2D.length ||
+            newCol < 0 ||
+            newCol >= matrix2D[0].length
           ) {
-            if (state[newRow][newCol] === null) {
-              if (
-                piece.moveDirection === offSetRow ||
-                king ||
-                isCapture
-              ) {
-                if (king) {
-                //   console.log({offSetRow, offSetCol})
-                //   console.log(calculatePossiblesMoves(
-                //   newCol + offSetCol,
-                //   newRow + offSetRow,
-                //   offSetCol,
-                //   offSetRow,
-                //   false
-                // ))
-                //throw new Error()
-                }
-                let item = {
-                  piecePos: {
-                    row: piece.position.row,
-                    col: piece.position.column
-                  },
-                  isCapture: isCapture,
-                  capturePiece: {
-                    row: null,
-                    col: null
-                  },
-                  movePos: {
-                    row: newRow,
-                    col: newCol
-                  }
-                };
-                game.state.allPossibleMovesInTurn.push(item);
-                moves.push(item);
-              }
-            } else {
-              if (state[newRow][newCol].piece.color !== color && !isCapture ) {
-                calculatePossiblesMoves(
-                  newCol + offSetCol,
-                  newRow + offSetRow,
-                  offSetCol,
-                  offSetRow,
-                  !isCapture
-                ).forEach(item => {
-                 // const enemyPiece = game.state.getPiece(newCol, newRow);
-                  //if (!enemyPiece) {
-                   // throw new Error({item})
-                //  }
-                 // if (enemyPiece) {
-                    //console.log("Inimigo", newCol, newRow);
-                    //console.log(enemyPiece);
-                    // console.log(
-                    //   `Peça ${col}-${row} => Há um inimigo em: x = ${newCol} - y = ${newRow}. Que pode ser capturado em: x = ${
-                    //     newCol + offSetCol
-                    //   } - y = ${newRow + offSetRow}`
-                    // );
-                    item.capturePiece.row = newRow
-                    item.capturePiece.col = newCol
-                    game.state.allPossibleMovesInTurn.push(item);
-                    moves.push(item);
-                  //}
-                });
-              } else {
-                //console.log('Amigo')
-              }
-            }
+            //console.log({newCol,newRow})
+            return -1;
           }
 
-          return moves;
-        }
+          // Retorna o estado da posição alvo
+          return {
+            target: matrix2D[newRow][newCol],
+            position: { x: newCol, y: newRow }
+          };
+        };
 
-        piece.possibleMovements = possibleMovements;
+        // Função para encontrar movimentos em todas as direções possíveis
+        const findMovesInAllDirections = (
+          matrix2D,
+          initRow,
+          initCol,
+          isCapture,
+          distance,
+          depth,
+          moveAttr
+        ) => {
+          // Verifica se a profundidade máxima foi atingida
+          if (depth > maxDepth) return moveAttr;
+          this.piece.possibleMovements = [];
+          moveAttr = { ...moveAttr };
+          const moves = [];
+
+          directions.forEach(direction => {
+            // Define a distância máxima com base se a peça é um rei ou não
+            const maxDist = king ? gameState.length : 1;
+
+            // Itera através das distâncias permitidas
+            for (let index = 1; index <= maxDist; index++) {
+              const statePosition = getPositionState(
+                matrix2D,
+                initRow,
+                initCol,
+                direction,
+                index,
+                false
+              );
+
+              // Se a posição é inválida ou contém uma peça da mesma cor, interrompe
+              if (statePosition === -1 || color === statePosition.target) {
+                //console.log({statePosition, color})
+                break;
+              } else {
+                // Modelo de movimento inicial
+                let move = {
+                  initPos: { x: pieceCol, y: pieceRow },
+                  targetPos: { x: null, y: null },
+                  capturePos: { x: null, y: null },
+                  isCapture: false,
+                  isKing: king,
+                  moveType: king ? "KING_MOVE" : "SIMPLE_MOVE",
+                  nextMove: false,
+                  attack: moveAttr.attack,
+                  defense: moveAttr.defense,
+                  sacrifice: moveAttr.sacrifice
+                };
+
+                // Se a posição contém uma peça do oponente
+                if (
+                  color !== statePosition.target &&
+                  statePosition.target !== null
+                ) {
+                  const statePositionCapture = getPositionState(
+                    matrix2D,
+                    initRow,
+                    initCol,
+                    direction,
+                    index,
+                    true
+                  );
+
+                  // Se a posição após a captura está vazia, adiciona o movimento de captura
+                  if (statePositionCapture.target === null) {
+                    move.capturePos.x = statePosition.position.x;
+                    move.capturePos.y = statePosition.position.y;
+                    move.targetPos.x = statePositionCapture.position.x;
+                    move.targetPos.y = statePositionCapture.position.y;
+                    move.moveType = king ? "KING_CAPTURE" : "CAPTURE";
+                    move.isCapture = true;
+                    move.attack = 10;
+                    move.defense = 1;
+                    this.piece.possibleMovements.push(move);
+                    game.state.allPossibleMovesInTurn.push(move)
+
+                    moves.push(move);
+                  }
+                  break;
+                } else if (statePosition.target === null) {
+                  // Adiciona o movimento simples
+                  move.targetPos.x = statePosition.position.x;
+                  move.targetPos.y = statePosition.position.y;
+                  move.attack = 1;
+                  move.defense = 1;
+                  if (moveDirection === direction.y || king) {
+                    this.piece.possibleMovements.push(move);
+                    game.state.allPossibleMovesInTurn.push(move)
+                    moves.push(move);
+                  }
+                }
+              }
+            }
+          });
+          return moves;
+        };
+
+        // Função para encontrar todos os movimentos possíveis para a peça
+        const findMoves = () => {
+          const moveAttr = {
+            attack: 1,
+            defense: 1,
+            sacrifice: false
+          };
+          //console.log(gameState)
+          const moves = findMovesInAllDirections(
+            gameState,
+            pieceRow,
+            pieceCol,
+            false,
+            1,
+            1,
+            moveAttr
+          );
+        };
+
+        // Chama a função para encontrar e imprimir os movimentos possíveis
+        findMoves();
       }
     };
   }

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.4.0/uicons-bold-rounded/css/uicons-bold-rounded.css" />
+    <title>Online Players</title>
+    <!-- Include Tailwind CSS -->
+
+    <link
+      rel="stylesheet"
+      href="/assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="container mx-auto">
+      <h1 class="text-2xl font-bold mt-8 mb-4">Online Players</h1>
+      <table
+        id="playersTable"
+        class="w-full table-auto">
+        <thead>
+          <tr>
+            <th class="border w-fit px-4 py-2"></th>
+            <th class="border px-4 py-2">Username</th>
+            <th class="border px-4 py-2">Socket ID</th>
+            <th class="border px-4 py-2">Room</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Player data will be inserted here dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- JavaScript for updating player data -->
+    <script>
+      // Function to fetch online players data and update the table
+      async function updatePlayersData() {
+        try {
+          const response = await fetch("/api/onlineplayers"); // Ajuste o endpoint da API conforme necessário
+          const data = await response.json();
+
+          // Clear previous table data
+          const tableBody = document.querySelector("#playersTable tbody");
+          tableBody.innerHTML = "";
+
+          // Insert new table rows with player data
+          Object.values(data).forEach(player => {
+            const row = `
+        <tr>
+        
+          <td class="border w-fit px-4 py-2">
+          ${
+            player.isConnected
+              ? '<i class="fi fi-br-wifi text-green-500"></i>'
+              : '<i class="fi fi-br-wifi-slash text-red-500"></i>'
+          }  </td>
+        
+          <td class="border px-4 py-2">
+          ${player.username}</td>
+          <td class="border px-4 py-2">${player.id.slice(0,6)}</td>
+          <td class="border px-4 py-2">${
+            player.room ? player.room.slice(0, 6) : "NOT ROOM"
+          }</td>
+        </tr>
+      `;
+            tableBody.insertAdjacentHTML("beforeend", row);
+          });
+        } catch (error) {
+          console.error("Error fetching online players data:", error);
+        }
+      }
+
+      // Initial call to fetch and update player data
+      updatePlayersData();
+
+      // Set interval to update player data every 2 seconds
+      setInterval(updatePlayersData, 250);
+    </script>
+  </body>
+</html>

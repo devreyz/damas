@@ -87,8 +87,12 @@ function draw() {
 
 //Mapa de cliques do tabuleiro
 function mousePressed(event) {
-  game.boardPressed({ mouseX, mouseY });
+  
   if (event.target === canvas.elt) {
+    
+    let col = floor(mouseX / squareSize);
+    let row = floor(mouseY / squareSize);
+  game.boardPressed({ col, row });
     event.preventDefault();
   }
 }

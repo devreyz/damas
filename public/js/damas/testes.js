@@ -166,3 +166,120 @@ let gameState = [
 ];
 
 mapAllMove(gameState, 1, 2, { color: "b", king: false });
+
+
+
+
+      findPossiblesMoves(state) {
+        const piece = this.piece;
+        piece.possibleMovements = [];
+        piece.inAlert = false;
+        let possibleMovements = [];
+        let { color, king } = piece;
+        
+        
+        let { row, column: col } = piece.position;
+        const turn = game.state.turn;
+        
+
+        possibleMovements.push(
+          ...calculatePossiblesMoves(col + 1, row + 1, 1, 1, false)
+        );
+        possibleMovements.push(
+          ...calculatePossiblesMoves(col - 1, row + 1, -1, 1, false)
+        );
+        possibleMovements.push(
+          ...calculatePossiblesMoves(col - 1, row - 1, -1, -1, false)
+        );
+        possibleMovements.push(
+          ...calculatePossiblesMoves(col + 1, row - 1, 1, -1, false)
+        );
+
+        function calculatePossiblesMoves(
+          newCol,
+          newRow,
+          offSetCol,
+          offSetRow,
+          isCapture
+        ) {
+          let moves = [];
+          if (
+            newRow >= 0 &&
+            newRow < 10 &&
+            newCol >= 0 &&
+            newCol < 10 &&
+            color === turn
+          ) {
+            if (state[newRow][newCol] === null) {
+              if (
+                piece.moveDirection === offSetRow ||
+                king ||
+                isCapture
+              ) {
+                if (king) {
+                //   console.log({offSetRow, offSetCol})
+                //   console.log(calculatePossiblesMoves(
+                //   newCol + offSetCol,
+                //   newRow + offSetRow,
+                //   offSetCol,
+                //   offSetRow,
+                //   false
+                // ))
+                //throw new Error()
+                }
+                let item = {
+                  piecePos: {
+                    row: piece.position.row,
+                    col: piece.position.column
+                  },
+                  isCapture: isCapture,
+                  capturePiece: {
+                    row: null,
+                    col: null
+                  },
+                  movePos: {
+                    row: newRow,
+                    col: newCol
+                  }
+                };
+                game.state.allPossibleMovesInTurn.push(item);
+                moves.push(item);
+              }
+            } else {
+              if (state[newRow][newCol].piece.color !== color && !isCapture ) {
+                calculatePossiblesMoves(
+                  newCol + offSetCol,
+                  newRow + offSetRow,
+                  offSetCol,
+                  offSetRow,
+                  !isCapture
+                ).forEach(item => {
+                 // const enemyPiece = game.state.getPiece(newCol, newRow);
+                  //if (!enemyPiece) {
+                   // throw new Error({item})
+                //  }
+                 // if (enemyPiece) {
+                    //console.log("Inimigo", newCol, newRow);
+                    //console.log(enemyPiece);
+                    // console.log(
+                    //   `Peça ${col}-${row} => Há um inimigo em: x = ${newCol} - y = ${newRow}. Que pode ser capturado em: x = ${
+                    //     newCol + offSetCol
+                    //   } - y = ${newRow + offSetRow}`
+                    // );
+                    item.capturePiece.row = newRow
+                    item.capturePiece.col = newCol
+                    game.state.allPossibleMovesInTurn.push(item);
+                    moves.push(item);
+                  //}
+                });
+              } else {
+                //console.log('Amigo')
+              }
+            }
+          }
+
+          return moves;
+        }
+
+        piece.possibleMovements = possibleMovements;
+      }

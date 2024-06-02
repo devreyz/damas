@@ -8,8 +8,8 @@ export function IAFactory() {
     ia.gameState = gameState;
     gameState.ia = true;
     ia.pieceColor = pieceColor;
-    ia.qi = qi || 1 ;
-    ia.qi = ia.qi/37
+    ia.qi = qi || 1;
+    ia.qi = ia.qi / 37;
 
     ia.on = () => {
       EventEmitter.emit("IA_MESSAGE", {
@@ -31,9 +31,7 @@ export function IAFactory() {
         });
       }, 2000);
     };
-    ia.processMove = function (moveData) {
-      const { turn, action } = moveData;
-
+    ia.processMove = function () {
       if (game.state.turn === ia.pieceColor) {
         game.state.iaTurn = true;
         setTimeout(() => {
@@ -48,21 +46,31 @@ export function IAFactory() {
           color: ia.pieceColor
         });
         const move = ia.getMove();
+        console.log(
+          "Player: " +
+            ia.name +
+            ", moveu a peça da posição - l: " +
+            move.initPos.y +
+            ", c: " +
+            move.initPos.x +
+            ". MoveType: " +
+            move.moveType
+        );
         //if(move.isCapture) game.state.capturePiece()
-        const piece = game.state.getPiece(move.piecePos.row, move.piecePos.col);
+        const piece = game.state.getPiece(move.initPos.y, move.initPos.x);
         piece.piece.isSelected = true;
         game.state.setSelectedPiece(piece);
         setTimeout(() => {
-          game.state.movePiece(game.state, move.movePos.row, move.movePos.col);
+          game.state.movePiece(game.state, move.targetPos.y, move.targetPos.x);
         }, 2000 / ia.qi);
       }, 3000 / ia.qi);
     };
     ia.getMove = () => {
-      const moves = gameState.allPossibleMovesInTurn;
-      
-      return moves[
-        Math.floor(Math.random() * gameState.allPossibleMovesInTurn.length)
-      ];
+      let moves = gameState.allPossibleMovesInTurn;
+      const captureMoves = moves.filter(item => item.isCapture === true);
+      if (captureMoves.length > 0) moves = captureMoves;
+      //console.log(captureMoves)
+      return moves[Math.floor(Math.random() * moves.length)];
     };
     return ia;
   }

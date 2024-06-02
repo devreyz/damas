@@ -18,10 +18,11 @@ const upload = multer({ storage: storage });
 dotenv.config();
 const jwt = JsonWebToken;
 export class Routes {
-  constructor(app, conn) {
+  constructor(app, conn, rooms,players) {
     this.app = app;
     this.conn = conn;
-
+    this.rooms = rooms
+    this.players = players
     this.initialize();
   }
   initialize() {
@@ -41,7 +42,26 @@ export class Routes {
     this.app.get("/game", this.validtoken, (req, res) => {
       res.sendFile(__dirname + "/public/game.html");
     });
-
+    
+    
+    this.app.get("/allrooms", (req, res) => {
+      res.json(this.rooms);
+    });
+    
+    
+    this.app.get("/rooms", (req, res) => {
+      res.sendFile(__dirname + "/public/rooms.html");
+    });
+    
+    
+    this.app.get("/players", (req, res) => {
+      res.sendFile(__dirname + "/public/players.html");
+    });
+  
+    this.app.get("/api/onlineplayers", (req, res) => {
+      res.json(this.players);
+    });
+    
     this.app.post("/auth/register", async (req, res) => {
       const { name, password } = req.body;
 

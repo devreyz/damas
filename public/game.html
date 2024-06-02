@@ -1,44 +1,62 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0" />
+    <title>Partida entre</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.3.0/uicons-bold-rounded/css/uicons-bold-rounded.css" />
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Partida entre </title>
-  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.3.0/uicons-bold-rounded/css/uicons-bold-rounded.css" />
+    <link
+      rel="stylesheet"
+      href="/assets/css/styles.css" />
+  </head>
 
-  <link rel="stylesheet" href="/assets/css/styles.css">
+  <body class="fixed max-h-screen">
+    <div
+      id="notification-container"
+      class="fixed top-0 left-0 m-4 z-50"></div>
+    <div
+      class="fixed flex gap-3 items-center top-0 left-0 text-lg z-40 bg-slate-900 w-full px-3 justify-end py-2">
+      <button
+        class="text-white"
+        id="quitButton">
+        <i class="fi fi-br-sign-out-alt"></i>
+      </button>
 
+      <span
+        id="turnView"
+        class="bg-orange-400 animate-bounce rounded-full w-6 h-6">
+      </span>
 
-</head>
+      <button
+        id="toggleTurn"
+        class="text-white px-4">
+        <i class="fi fi-br-exchange"></i>
+      </button>
 
-<body class="fixed max-h-screen ">
-  <div id="notification-container" class="fixed top-0 left-0 m-4 z-50"></div>
-  <div class="fixed flex gap-3 items-center  top-0 left-0 text-lg z-40 bg-slate-900 w-full px-3 justify-end py-2">
-
-    <span id="turnView" class="bg-orange-400 animate-bounce rounded-full w-6 h-6"> </span>
-
-    <button id="toggleTurn" class="text-white px-4"><i class="fi fi-br-exchange"></i></button>
-
-    <span class="text-white" id="ping"><i class="fi fi-br-menu-dots"></i></span>
-    <div id="show-connect-socket" class="">
-      <i class="fi fi-br-loading text-amber-400 text-lg"></i>
+      <span
+        class="text-white"
+        id="ping"
+        ><i class="fi fi-br-menu-dots"></i
+      ></span>
+      <div
+        id="show-connect-socket"
+        class="">
+        <i class="fi fi-br-loading text-amber-400 text-lg"></i>
+      </div>
     </div>
-  </div>
 
-
-
-
-
-  <script src="/js/utils/p5.js"></script>
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="/js/damas/global.js"></script>
-  <script src="/js/damas/render.js"></script>
-  <script src="/js/damas/Game.js" type="module"></script>
-  <script src="/js/damas/testes.js" type="module"></script>
-  
-
-
-</body>
-
+    <script src="/js/utils/p5.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/damas/global.js"></script>
+    <script src="/js/damas/render.js"></script>
+    <script
+      src="/js/damas/Game.js"
+      type="module"></script>
+    <!-- <script src="/js/damas/testes.js" type="module"></script> -->
+  </body>
 </html>

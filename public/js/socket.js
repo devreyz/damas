@@ -3,7 +3,7 @@ import EventEmitter from "./utils/EventEmitter.js";
 import { startCountdown } from "./components/countDown.js";
 export class Socket {
   constructor() {
-    this.init = (options) => io(options);
+    this.init = options => io(options);
     this.io = null;
   }
 }
@@ -16,23 +16,24 @@ export class SocketEvents {
   }
   connect() {
     const showStateElem = document.getElementById("show-connect-socket");
-    this.io.on("connect", (socket) => {
+    this.io.on("connect", socket => {
       showStateElem.innerHTML = '<i class="fi fi-br-wifi text-green-500"></i>';
+      
 
       this.io.on("JoinRequestNotification", (data, callback) => {
-        EventEmitter.emit("addtoast", data, (res) => {
+        EventEmitter.emit("addtoast", data, res => {
           callback(res);
         });
       });
 
-      this.io.on("initgame", (data) => {
+      this.io.on("initgame", data => {
         startCountdown(2000, "/game/?id=" + data.roomName);
       });
       // Receber mensagens da sala
-      this.io.on("receiveMessage", (message) => {
+      this.io.on("receiveMessage", message => {
         console.log("Message from room:", message);
       });
-      this.io.on("hi", (callback) => {
+      this.io.on("hi", callback => {
         callback("hello");
       });
 
@@ -42,8 +43,29 @@ export class SocketEvents {
           this.io.emit("refreshsocketid");
         }
       });
+      
+      
+      EventEmitter.on("QUIT_GAME_ROOM", data => {
+        this.io.emit("QUIT_GAME_ROOM", ()=>{
+          window.location.href = "/home"
+        });
+      });
 
-      this.io.on("disconnect", (socket) => {
+      EventEmitter.on("MOVE_MADE", data => {
+        this.io.emit("enchangeMoveData", data);
+      });
+      EventEmitter.on("SELECT_PIECE", (data, callback) => {
+        this.io.emit("SELECT_PIECE", data, callback)
+      });
+      
+      this.io.on("IN_ROOM_SELECT_PIECE", (data, callback) => {
+        
+        EventEmitter.emit("BOARD_ON_PRESSED", data.position)
+        //console.log(data)
+        callback(true)
+      })
+
+      this.io.on("disconnect", socket => {
         showStateElem.innerHTML =
           '<i class="fi fi-br-wifi-slash text-red-500"></i>';
         this.pingStatusElement.classList = "ping-very-poor";
@@ -51,27 +73,28 @@ export class SocketEvents {
       });
     });
 
-    this.io.on("reconnect_attempt", (attempt) => {
+    this.io.on("reconnect_attempt", attempt => {
       // ...
       console.log("Reconectando");
     });
   }
   listRooms() {
-    this.io.emit("listRooms", (rooms) => {
-    
-    });
+    this.io.emit("listRooms", rooms => {});
   }
   joinGameRoom(roomName) {
-    this.io.emit("joinGameRoom", roomName, (data) => {
-      
-    });
-  
-  }
-  enchangeMovedata(roomName, message) {
-    this.io.emit("enchangeMovedata", roomName, message, (data) => {
-      console.log(data);
+    this.io.emit("joinGameRoom", roomName, data => {
+      EventEmitter.emit("ON_ROOM", data)
+      //console.log(data[username])
     });
   }
+  thisPlayerInARoom(){
+      this.io.on("PLAYER_CONNECTED", player => {
+        if (player.room) {
+          startCountdown(1000, "/game/?id=" + player.room)
+        }
+      })
+  }
+
   desconect() {}
   ping() {
     var startTime = Date.now();
@@ -106,7 +129,9 @@ export class SocketEvents {
     });
   }
 
-  playerListItem(name, imageSrc) {
+  playerListItem(player, imageSrc) {
+    const { username, room, isConnected } = player;
+
     // Criar elemento <li> com classes Tailwind CSS
     this.element = document.createElement("li");
     this.element.classList.add(
@@ -136,7 +161,7 @@ export class SocketEvents {
     const nameContainer = document.createElement("div");
     nameContainer.classList.add("flex-1", "py-1", "px-2");
     const nameSpan = document.createElement("span");
-    nameSpan.textContent = name;
+    nameSpan.textContent = username;
     nameContainer.appendChild(nameSpan);
 
     // Criar elemento <div> para os botões
@@ -151,20 +176,23 @@ export class SocketEvents {
     );
     const removeButton = document.createElement("button");
     removeButton.innerHTML = `
-        <i class="fi fi-br-square-x hidden"></i>
-        <i class="fi fi-br-checkbox hidden"></i>
-        <i class="fi fi-br-square-plus"></i>
-    `;
+        ${room ? "Jogando" : '<i class="fi fi-br-square-plus"></i>'}`;
     removeButton.onclick = async () => {
       const data = {
         from: this.username,
         msg: "Vamos jogar",
-        for: name,
+        for: username
       };
 
-      this.io.emit("game", data, (res) => {
-        //console.log(res);
-      });
+      if (!room) {
+        this.io.emit("game", data, res => {
+          if (res.status === "jogando") {
+            EventEmitter.emit("PLAYER_IS_GAMMING");
+          }
+        });
+      } else {
+        EventEmitter.emit("PLAYER_IS_GAMMING");
+      }
     };
     const addButton = document.createElement("button");
     addButton.innerHTML = `
@@ -182,19 +210,14 @@ export class SocketEvents {
 
   async listUsers() {
     // Manipular o evento para receber a lista de usuários online
-    this.io.emit("onlineUsers", (users) => {
+    this.io.emit("onlineUsers", users => {
       //console.log(users);
       const ul = document.createElement("ul");
-      const otherUsers = users.filter(
-        (user) => user.username !== this.username
-      );
+      const otherUsers = users.filter(user => user.username !== this.username);
 
       this.playerList.innerHTML = "";
-      otherUsers.forEach((item) => {
-        const li = this.playerListItem(
-          item.username,
-          "/assets/img/michaelangelo.png"
-        );
+      otherUsers.forEach(item => {
+        const li = this.playerListItem(item, "/assets/img/michaelangelo.png");
         this.playerList.appendChild(li);
       });
     });

@@ -5,11 +5,10 @@ import path from "path";
 import mysql from "mysql";
 import dotenv from "dotenv";
 import { Routes } from "./routes/Routes.js";
+import { UserManager } from "./models/UserManager.js";
 import cookieParser from "cookie-parser";
 
-// import { Routes } from "./routes/Routes.js";
 global.__dirname = path.resolve();
-
 dotenv.config();
 
 /**
@@ -25,6 +24,7 @@ class App {
     this.io = new Server(this.http); // Inicializa o Socket.IO
     this.connections = {}; // Armazena informações sobre as conexões dos usuários
     this.rooms = {}; // Armazena informações sobre as salas
+    this.userManager = new UserManager();
     this.initialize(); // Inicializa o aplicativo
   }
 
@@ -37,7 +37,7 @@ class App {
       host: process.env.DB_HOST,
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
+      database: process.env.DB_NAME
     });
 
     this.app.use(express.static(path.join(__dirname, "public"))); // Configura o middleware para servir arquivos estáticos
@@ -45,7 +45,12 @@ class App {
     this.app.use(cookieParser()); // Configura o middleware para analisar cookies
 
     this.listenSocket(); // Configura os eventos do Socket.IO
-    this.routes = new Routes(this.app, this.conn); // Configura as rotas do aplicativo
+    this.routes = new Routes(
+      this.app,
+      this.conn,
+      this.rooms,
+      this.userManager.connections
+    ); // Configura as rotas do aplicativo
   }
 
   /**
@@ -54,7 +59,7 @@ class App {
   listenServer() {
     this.app.use(express.json()); // Configura o middleware para decodificar JSON
 
-    this.conn.connect((err) => {
+    this.conn.connect(err => {
       // Conecta-se ao banco de dados MySQL
       if (err) throw err;
       this.http.listen(3000, () =>
@@ -68,120 +73,138 @@ class App {
    * Método para lidar com eventos do Socket.IO.
    */
   listenSocket() {
-    this.io.on("connection", (socket) => {
+    this.io.on("connection", socket => {
       // Configura os eventos para quando um usuário se conecta
       const username = socket.handshake.auth.username; // Obtém o nome de usuário do handshake
-      this.connections[username] = {
-        // Armazena informações sobre a conexão do usuário
-        id: socket.id,
-        username: username,
-        isConected: true,
-      };
-      const player = this.connections[username];
-      // console.log(this.rooms);
+      if (username) {
+        this.userManager.addUser(socket, username);
 
-      socket.on("refreshsocketid", () => {
-        //  Atualiza o socket.id do jogador quando o jogo entra em foco
-        this.connections[username].id = socket.id;
-      });
+        socket.emit(
+          "PLAYER_CONNECTED",
+          this.userManager.getUserByUsername(username)
+        );
 
-      socket.on("ping", () => {
-        // Configura o evento ping-pong para verificar a conexão
-        socket.emit("pong");
-      });
+        socket.on("QUIT_GAME_ROOM", quit => {
+          //socket.leave(room);
+          this.userManager.connections[username].room = null;
+          quit();
+          console.log("Saiu da sala");
+        });
 
-      socket.on("onlineUsers", (cd) => {
-        // Configura o evento para obter usuários online
-        cd(Object.values(this.connections));
-      });
+        socket.on("ping", () => {
+          // Configura o evento ping-pong para verificar a conexão
+          socket.emit("pong");
+        });
 
-      socket.on("listRooms", (callback) => {
-        //console.log("Listar salas chamado")
-        callback(this.rooms);
-      });
+        socket.on("onlineUsers", callback => {
+          // Configura o evento para obter usuários online
+          callback(Object.values(this.userManager.connections));
+        });
 
-      socket.on("joinGameRoom", (roomName, callback) => {
-        socket.join(roomName);
-        console.log(`User joined room  ${roomName}`);
-        callback({ msg: "Entrou na sala" });
-      });
+        socket.on("listRooms", callback => {
+          //console.log("Listar salas chamado")
+          callback(this.rooms);
+        });
 
-      // Sair de uma sala específica
-      socket.on("leaveRoom", (room) => {
-        socket.leave(room);
-        console.log(`User left room ${room}`);
-      });
+        socket.on("joinGameRoom", (roomName, callback) => {
+          console.log("Entrou na sala: ", roomName);
+          socket.join(roomName);
+          //console.log(`User joined room  ${roomName}`);
+          callback(this.rooms[roomName]);
+        });
 
-      // Enviar mensagem para todos os sockets em uma sala
-      socket.on("enchangeMoveData", (room, message, callback) => {
-        console.log("Ola");
-        callback({msg: "re"})
-        io.to(room).emit("receiveMessage", message);
-      });
+        // Sair de uma sala específica
+        socket.on("leaveRoom", room => {
+          socket.leave(room);
+          console.log(`User left room ${room}`);
+        });
 
-      socket.on("game", (data, callback) => {
-        // Configura o evento para iniciar um jogo
-        const playerFrom = this.connections[data.from];
-        const playerTo = this.connections[data.for];
-
-        // Emite uma notificação de solicitação de jogo para o outro jogador
-        this.io
-          .to(playerTo.id)
-          .timeout(5000)
-          .emit("JoinRequestNotification", data, (err, res) => {
-            if (err) {
-              callback(false);
-            } else {
-              if (res[0]) {
-                callback(true);
-                const roomName = crypto.randomUUID(); // Crie  um id randômico para a sala
-                // Emite o evento de inicialização do jogo para ambos os jogadores
-
-                this.io.to(playerFrom.id).emit("initgame", { roomName });
-                this.io.to(playerTo.id).emit("initgame", { roomName });
-                const usernameFrom = playerFrom.username;
-                const usernameTo = playerTo.username;
-                this.rooms[roomName] = {
-                  [usernameFrom]: playerFrom,
-                  [usernameTo]: playerTo,
-                  turn: null,
-                };
-              } else {
+        // Enviar mensagem para todos os sockets em uma sala
+        socket.on("enchangeMoveData", () => {});
+        socket.on("SELECT_PIECE", (data, callback) => {
+          //console.log(data);
+          socket
+            .to(data.room)
+            .timeout(5000)
+            .emit("IN_ROOM_SELECT_PIECE", data, (err, res) => {
+              if (err) {
                 callback(false);
+              } else {
+                callback(res);
               }
-            }
-          });
-      });
+            });
+        });
 
-      socket.on("disconnect", () => {
-        if (this.connections[username]) {
-          // Configura o evento para quando um usuário se desconecta
-          try {
-            this.connections[username].isConected = false;
-            setTimeout(() => {
-              // Define um timeout para excluir as informações do usuário após 10 segundos
-              if (
-                this.connections[username] &&
-                !this.connections[username].isConected
-              ) {
-                this.io
-                  .to(this.connections[username].id)
-                  .timeout(5000)
-                  .emit("hi", (err, res) => {
-                    if (err || res[0] !== "hello") {
-                      delete this.connections[username];
-                      console.log("Usuario removido: " + username);
-                    } else {
-                      console.log(res);
-                    }
-                  });
-              }
-            }, 30000);
-          } catch (error) {
-            console.log(error);
+        socket.on("game", (data, callback) => {
+          if (this.userManager.getUserByUsername(data.from).room === null) {
+            // Configura o evento para iniciar um jogo
+            const playerFrom = this.userManager.getUserByUsername(data.from);
+            const playerTo = this.userManager.getUserByUsername(data.for);
+
+            // Emite uma notificação de solicitação de jogo para o outro jogador
+            this.io
+              .to(playerTo.id)
+              .timeout(5000)
+              .emit("JoinRequestNotification", data, (err, res) => {
+                if (err) {
+                  callback(false);
+                } else {
+                  if (res[0]) {
+                    callback(true);
+                    const roomName = crypto.randomUUID(); // Crie um id randômico para a sala
+                    // Emite o evento de inicialização do jogo para ambos os jogadores
+
+                    this.io.to(playerFrom.id).emit("initgame", { roomName });
+                    this.io.to(playerTo.id).emit("initgame", { roomName });
+                    const usernameFrom = playerFrom.username;
+                    const usernameTo = playerTo.username;
+                    playerFrom.room = roomName;
+                    playerTo.room = roomName;
+                    const playerColor = Math.floor(Math.random() * 2 + 1);
+                    console.log(playerColor);
+                    this.rooms[roomName] = {
+                      [usernameFrom]: {
+                        ...playerFrom,
+                        playerColor: playerColor === 1 ? "white" : "black"
+                      },
+                      [usernameTo]: {
+                        ...playerTo,
+                        playerColor: playerColor === 1 ? "black" : "white"
+                      },
+                      turn:
+                        Math.floor(Math.random() * 2) === 1 ? "white" : "black"
+                    };
+                    //console.log('Salas: ', this.rooms)
+                  } else {
+                    callback(false);
+                  }
+                }
+              });
+          } else {
+            callback({ status: "jogando" });
           }
-        }
-      });
+        });
+
+        socket.on("update-socket-id", (username, newSocketId) => {
+          this.userManager.updateSocketId(username, newSocketId);
+        });
+
+        socket.on("reconnect", username => {
+          this.userManager.handleReconnect(socket, username);
+        });
+
+        socket.on("disconnect", () => {
+          const username = Object.keys(this.userManager.connections).find(
+            key => this.userManager.connections[key].id === socket.id
+          );
+          if (username) {
+            this.userManager.handleDisconnect(socket, username);
+          }
+        });
+      } else {
+        console.error("Username is required for connection.");
+        socket.disconnect();
+      }
     });
   }
 }

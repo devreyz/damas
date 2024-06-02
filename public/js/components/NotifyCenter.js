@@ -21,5 +21,5 @@ export function showNotification(data) {
     setTimeout(() => {
       notification.remove(); // Remove o elemento do DOM após a transição
     }, 500); // Tempo da transição
-  }, 1000); // Tempo que a notificação fica visível
+  }, 500); // Tempo que a notificação fica visível
 }

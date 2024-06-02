@@ -1,5 +1,5 @@
 import { Socket, SocketEvents } from "/js/socket.js";
-
+import EventEmitter from "./utils/EventEmitter.js";
 const username = document.cookie
   .split("; ")
   .find(row => row.startsWith("username="))
@@ -29,7 +29,7 @@ btnListRooms.onclick = () => listarSalas();
 function listarSalas() {
   socketEvents.listRooms();
 }
-socketEvents.joinGameRoom();
+socketEvents.thisPlayerInARoom();
 // Função para exibir um alerta quando a página volta ao foco
 function handlePageFocus() {
   //console.log("A página está de volta ao foco!");
@@ -42,3 +42,9 @@ document.addEventListener("visibilitychange", () => {
     handlePageFocus();
   }
 });
+
+
+
+EventEmitter.on("PLAYER_IS_GAMMING", () => {
+  alert('Jogando')
+})
