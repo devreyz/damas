@@ -8,7 +8,7 @@ export class UserManager {
     if (existingUser) {
       this.updateSocketId(username, socket.id);
       this.connections[username].isConnected = true;
-      console.log(`User ${username} reconnected with updated ID: ${socket.id}`);
+      // console.log(`User ${username} reconnected with updated ID: ${socket.id}`);
     } else {
       this.connections[username] = {
         id: socket.id,
@@ -16,10 +16,8 @@ export class UserManager {
         isConnected: true,
         room: null
       };
-      console.log(`User ${username} connected with ID: ${socket.id}`);
+      // console.log(`User ${username} connected with ID: ${socket.id}`);
     }
-    
-      
   }
 
   removeUser(username) {
@@ -29,9 +27,9 @@ export class UserManager {
     ) {
       //clearTimeout(this.connections[username].timeoutId);
       delete this.connections[username];
-      console.log(`Usuario ${username} removido`);
+      // console.log(`Usuario ${username} removido`);
     } else {
-      console.log(`Usuario ${username} não foi removido`);
+      //console.log(`Usuario ${username} não foi removido`);
     }
   }
 
@@ -44,7 +42,7 @@ export class UserManager {
         this.removeUser(username);
       }, 30000); // 60000 ms = 1 minute
 
-      console.log(`User ${username} disconnected. Waiting for reconnection...`);
+      //console.log(`User ${username} disconnected. Waiting for reconnection...`);
     }
   }
 
@@ -53,7 +51,7 @@ export class UserManager {
       //clearTimeout(this.connections[username].timeoutId);
       this.connections[username].id = socket.id;
       this.connections[username].isConnected = true;
-      console.log(`User ${username} reconnected with ID: ${socket.id}`);
+      // console.log(`User ${username} reconnected with ID: ${socket.id}`);
     } else {
       this.addUser(socket, username);
     }
@@ -62,7 +60,7 @@ export class UserManager {
   updateSocketId(username, newSocketId) {
     if (this.connections[username]) {
       this.connections[username].id = newSocketId;
-      console.log(`Updated socket ID for user ${username} to ${newSocketId}`);
+      //console.log(`Updated socket ID for user ${username} to ${newSocketId}`);
     }
   }
 

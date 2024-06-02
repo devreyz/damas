@@ -44,7 +44,7 @@ export class Routes {
     });
     
     
-    this.app.get("/allrooms", (req, res) => {
+    this.app.get("/api/rooms", (req, res) => {
       res.json(this.rooms);
     });
     

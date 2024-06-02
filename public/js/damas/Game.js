@@ -34,36 +34,51 @@ EventEmitter.on("IO_SELECT_PIECE", data => {
   piece.piece.isSelected = true;
   game.state.setSelectedPiece(piece, true);
 });
+
 EventEmitter.on("ON_ROOM", data => {
   // Example usage of the factory
   const stateOptions = {
     turn: data.turn,
-    playerColor: data[username].playerColor
+    playerColor: data[username].color
   };
   game.state = GameStateFactory.getInstance(gameState);
   game.board = CheckersBoardFactory.getInstance(game.state);
   game.state.setStateOptions(stateOptions);
   game.state.findAllPossiblesPiecesMoves();
-  game.boardPressed = args => {
+  game.boardPressed = (args, io) => {
     const { col, row } = args;
 
     if (col >= 0 && col < 10 && row >= 0 && row < 10) {
       let item = game.state.getPiece(row, col);
+
+      if (!io && game.state.turn === game.state.playerColor ) {
+        
+        //alert()
+        EventEmitter.emit(
+          "BOARD_ON_PRESSED",
+          { room: roomId, position: { column: col, row: row } },
+          res => {
+            console.log(res);
+          }
+        );
+      }
       if (item !== null) {
-        game.state.toggleSelectedPiece(item, game.state);
+        game.state.toggleSelectedPiece(item, game.state, io);
       } else if (game.state.selectedPiece) {
         game.state.movePiece(game.state, row, col);
       }
     }
   };
-  
-  EventEmitter.on("BOARD_ON_PRESSED", position => {
-     position = { 
+
+  EventEmitter.on("IO_BOARD_ON_PRESSED", position => {
+    //alert('recebi');
+    position = {
       row: position.row,
       col: position.column
-    }
-    game.boardPressed(position)
-    })
+    };
+    console.log(position);
+    game.boardPressed(position, true);
+  });
 
   document.getElementById("turnView").classList =
     game.state.turn === "black"

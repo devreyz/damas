@@ -93,13 +93,7 @@ export const GameStateFactory = (function () {
           room: roomId,
           position: position
         };
-        if (!io) {
-          
         
-        EventEmitter.emit("SELECT_PIECE", data, res => {
-          console.log(res);
-        });
-        }
       },
       removeSelectedPiece() {
         if (this.selectedPiece) {
@@ -107,10 +101,10 @@ export const GameStateFactory = (function () {
           this.selectedPiece = null;
         }
       },
-      toggleSelectedPiece(piece, state) {
+      toggleSelectedPiece(piece, state, io) {
         if (
           this.turn === this.playerColor &&
-          piece.getInfo("color") === this.playerColor
+          piece.getInfo("color") === this.playerColor || io
         ) {
           if (state.selectedPiece === null) {
             this.setSelectedPiece(piece);
@@ -129,6 +123,7 @@ export const GameStateFactory = (function () {
               //state.selectedPiece = piece;
             }
           }
+          
         } else {
           //console.log(piece.getInfo());
           if (piece.getInfo("color") === this.playerColor) {
@@ -166,7 +161,7 @@ export const GameStateFactory = (function () {
           moves.some(
             item => item.targetPos.x === newCol && item.targetPos.y === newRow
           );
-        if ((verifyTurn && verifyMoves) || (this.iaTurn && verifyMoves)) {
+        if ((verifyTurn && verifyMoves) || (true && verifyMoves)  || (this.iaTurn && verifyMoves)) {
           const test = state.state[row][column];
           this.selectedPiece.move(newRow, newCol);
           this.state[newRow][newCol] = state.state[row][column];
@@ -179,6 +174,7 @@ export const GameStateFactory = (function () {
             //throw new Error()
           } else {
             this.toggleTurn();
+            
           }
           this.findAllPossiblesPiecesMoves();
           if (this.quantityPieces.white === 0) alert("Vitoria black");

@@ -92,7 +92,7 @@ function mousePressed(event) {
     
     let col = floor(mouseX / squareSize);
     let row = floor(mouseY / squareSize);
-  game.boardPressed({ col, row });
+  game.boardPressed({ col, row }, false);
     event.preventDefault();
   }
 }

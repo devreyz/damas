@@ -121,12 +121,26 @@ class App {
 
         // Enviar mensagem para todos os sockets em uma sala
         socket.on("enchangeMoveData", () => {});
-        socket.on("SELECT_PIECE", (data, callback) => {
+
+        socket.on("BOARD_ON_PRESSED", (data, callback) => {
           //console.log(data);
           socket
             .to(data.room)
             .timeout(5000)
-            .emit("IN_ROOM_SELECT_PIECE", data, (err, res) => {
+            .emit("IO_BOARD_ON_PRESSED", data, (err, res) => {
+              if (err) {
+                callback(false);
+              } else {
+                callback(res);
+              }
+            });
+        });
+        socket.on("TOGGLE_TURN", (data, callback) => {
+          console.log("data");
+          socket
+            .to(data.room)
+            .timeout(5000)
+            .emit("IO_TOGGLE_TURN", (err, res) => {
               if (err) {
                 callback(false);
               } else {
@@ -158,23 +172,76 @@ class App {
                     this.io.to(playerTo.id).emit("initgame", { roomName });
                     const usernameFrom = playerFrom.username;
                     const usernameTo = playerTo.username;
+                    const playerColor = Math.floor(Math.random() * 2 + 1);
                     playerFrom.room = roomName;
                     playerTo.room = roomName;
-                    const playerColor = Math.floor(Math.random() * 2 + 1);
+                    playerFrom.color = playerColor === 1 ? "black" : "white";
+                    playerTo.color = playerColor === 1 ? "white" : "black";
+
                     console.log(playerColor);
                     this.rooms[roomName] = {
-                      [usernameFrom]: {
-                        ...playerFrom,
-                        playerColor: playerColor === 1 ? "white" : "black"
-                      },
-                      [usernameTo]: {
-                        ...playerTo,
-                        playerColor: playerColor === 1 ? "black" : "white"
-                      },
+                      [usernameFrom]: playerFrom,
+                      [usernameTo]: playerTo,
                       turn:
-                        Math.floor(Math.random() * 2) === 1 ? "white" : "black"
+                        Math.floor(Math.random() * 2) === 1 ? "white" : "black",
+                      state: [
+                        [null, "b", null, "b", null, "b", null, "b", null, "b"],
+                        ["b", null, "b", null, "b", null, "b", null, "b", null],
+                        [null, "b", null, "b", null, "b", null, "b", null, "b"],
+                        [
+                          null,
+                          null,
+                          null,
+                          null,
+                          null,
+                          null,
+                          null,
+                          null,
+                          null,
+                          null
+                        ],
+                        [
+                          null,
+                          null,
+                          null,
+                          null,
+                          null,
+                          null,
+                          null,
+                          null,
+                          null,
+                          null
+                        ],
+                        [
+                          null,
+                          null,
+                          null,
+                          null,
+                          null,
+                          null,
+                          null,
+                          null,
+                          null,
+                          null
+                        ],
+                        [
+                          null,
+                          null,
+                          null,
+                          null,
+                          null,
+                          null,
+                          null,
+                          null,
+                          null,
+                          null
+                        ],
+                        ["w", null, "w", null, "w", null, "w", null, "w", null],
+                        [null, "w", null, "w", null, "w", null, "w", null, "w"],
+                        ["w", null, "w", null, "w", null, "w", null, "w", null]
+                      ]
                     };
-                    //console.log('Salas: ', this.rooms)
+                    console.log(this.rooms);
                   } else {
                     callback(false);
                   }

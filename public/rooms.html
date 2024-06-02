@@ -1,91 +1,111 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atualização de Salas</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100">
-
-    <!-- Navbar -->
-    <nav class="bg-blue-600 p-4 text-white">
-        <div class="container mx-auto">
-            <div class="flex justify-between items-center">
-                <h1 class="text-xl font-bold">Monitoramento de Salas</h1>
-                <ul class="flex space-x-4">
-                    <li><a href="#" class="hover:underline">Home</a></li>
-                    <li><a href="#" class="hover:underline">Sobre</a></li>
-                    <li><a href="#" class="hover:underline">Contato</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="container mx-auto mt-8 p-4 bg-white shadow-lg rounded-lg">
-        <h2 class="text-2xl font-bold mb-4">Status das Salas</h2>
-        <div id="roomsContainer" class="space-y-4">
-            <!-- Dados das salas serão inseridos aqui -->
-        </div>
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.4.0/uicons-bold-rounded/css/uicons-bold-rounded.css" />
+    
+    <link
+      rel="stylesheet"
+      href="/assets/css/styles.css" />
+    <title>Socket.IO Rooms</title>
+    <style>
+      .board {
+        width: 150px;
+        height: 150px;
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        
+      }
+      .board div {
+        width: 15px;
+        height: 15px;
+        border: .5px solid #fff4;
+      }
+      .white-piece {
+        background-color: #fff;
+        border-radius: 99px;
+      }
+      .black-piece {
+        background-color: #d48f0d;
+        border-radius: 99px;
+      }
+      
+    </style>
+  </head>
+  <body class="bg-slate-900  text-slate-100">
+    <div class="container mx-auto p-8">
+      <h1 class="text-4xl font-bold mb-8">Socket.IO Rooms</h1>
+      <div id="roomsContainer" class="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <!-- Room data will be inserted here dynamically -->
+      </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-blue-600 p-4 text-white mt-8">
-        <div class="container mx-auto text-center">
-            <p>© 2024 Monitoramento de Salas</p>
-        </div>
-    </footer>
-
+    <!-- JavaScript for updating room data -->
     <script>
-        // Função para obter e atualizar os dados das salas
-        async function updateRooms() {
-            try {
-                const response = await fetch('http://localhost:3000/allrooms');
-                const rooms = await response.json();
-                console.log(rooms)
-                const roomsContainer = document.getElementById('roomsContainer');
-                roomsContainer.innerHTML = '';
+      async function updateRoomsData() {
+        try {
+          const response = await fetch("/api/rooms"); // Ajuste o endpoint da API conforme necessário
+          const data = await response.json();
 
-                Object.keys(rooms).forEach(roomKey => {
-                    const room = rooms[roomKey];
-                    const roomDiv = document.createElement('div');
-                    roomDiv.className = 'p-4 bg-gray-100 rounded-lg shadow';
+          // Clear previous room data
+          const roomsContainer = document.getElementById("roomsContainer");
+          roomsContainer.innerHTML = "";
 
-                    const roomTitle = document.createElement('p');
-                    roomTitle.className = 'text-lg font-bold';
-                    roomTitle.textContent = `Sala: ${roomKey}`;
-
-                    const player5 = room.player5;
-                    const player5Div = document.createElement('div');
-                    player5Div.className = 'mt-2';
-                    player5Div.innerHTML = `<strong>Jogador 5:</strong> ${player5.username} - Conectado: ${player5.isConected}`;
-
-                    const player4 = room.player4;
-                    const player4Div = document.createElement('div');
-                    player4Div.className = 'mt-2';
-                    player4Div.innerHTML = `<strong>Jogador 4:</strong> ${player4.username} - Conectado: ${player4.isConected}`;
-
-                    const turnDiv = document.createElement('div');
-                    turnDiv.className = 'mt-2';
-                    turnDiv.innerHTML = `<strong>Turno:</strong> ${room.turn !== null ? room.turn : 'Nenhum'}`;
-
-                    roomDiv.appendChild(roomTitle);
-                    roomDiv.appendChild(player5Div);
-                    roomDiv.appendChild(player4Div);
-                    roomDiv.appendChild(turnDiv);
-                    roomsContainer.appendChild(roomDiv);
-                });
-            } catch (error) {
-                console.error('Erro ao obter os dados das salas:', error);
-            }
+          // Insert new room cards with player data and board state
+          Object.keys(data).forEach(roomId => {
+            const room = data[roomId];
+            const roomCard = `
+              <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h2 class="text-xl font-bold mb-4">Room ID: ${roomId.slice(0, 8)}</h2>
+                <div class="mb-4">
+                  <p class="font-semibold">Turn: ${room.turn}</p>
+                </div>
+                <div class="flex justify-between items-center p-4">
+                  
+                <div class="space-y-4">
+                  ${Object.values(room)
+                    .filter(player => player.username) // Filter to exclude 'turn' key
+                    .map(player => `
+                      <div class="flex items-center space-x-4">
+                        <div class="flex-shrink-0">
+                          ${player.isConnected
+                            ? '<i class="fi fi-br-wifi text-green-500"></i>'
+                            : '<i class="fi fi-br-wifi-slash text-red-500"></i>'}
+                        </div>
+                        <div class="flex-1">
+                          <p class="text-lg font-semibold">${player.username}</p>
+                          <p class="text-sm">ID: ${player.id.slice(0, 6)}</p>
+                          <p class="text-sm">Color: ${player.color}</p>
+                        </div>
+                      </div>
+                    `).join('')}
+                </div>
+                <div class="">
+                  <div class="board">
+                    ${room.state.flat().map(cell => `
+                      <div class="${cell === 'w' ? 'white-piece' : cell === 'b' ? 'black-piece' : ''}"></div>
+                    `).join('')}
+                  </div>
+                  
+                </div>
+                </div>
+              </div>
+            `;
+            roomsContainer.insertAdjacentHTML("beforeend", roomCard);
+          });
+        } catch (error) {
+          console.error("Error fetching rooms data:", error);
         }
+      }
 
-        // Atualiza os dados das salas a cada segundo
-        setInterval(updateRooms, 1000);
+      // Initial call to fetch and update room data
+      updateRoomsData();
 
-        // Chamada inicial para preencher os dados das salas
-        updateRooms();
+      // Set interval to update room data every 2 seconds
+      setInterval(updateRoomsData, 2000);
     </script>
-</body>
+  </body>
 </html>

@@ -54,16 +54,17 @@ export class SocketEvents {
       EventEmitter.on("MOVE_MADE", data => {
         this.io.emit("enchangeMoveData", data);
       });
-      EventEmitter.on("SELECT_PIECE", (data, callback) => {
-        this.io.emit("SELECT_PIECE", data, callback)
+      EventEmitter.on("BOARD_ON_PRESSED", (data, callback) => {
+        this.io.emit("BOARD_ON_PRESSED", data, callback)
       });
       
-      this.io.on("IN_ROOM_SELECT_PIECE", (data, callback) => {
+      this.io.on("IO_BOARD_ON_PRESSED", (data, callback) => {
         
-        EventEmitter.emit("BOARD_ON_PRESSED", data.position)
+        EventEmitter.emit("IO_BOARD_ON_PRESSED", data.position)
         //console.log(data)
         callback(true)
       })
+      
 
       this.io.on("disconnect", socket => {
         showStateElem.innerHTML =
