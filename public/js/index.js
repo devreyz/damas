@@ -15,7 +15,6 @@ const io = new Socket(username).init(socketConfig);
 const socketEvents = new SocketEvents(io, username);
 const refreshPlayersBtn = document.getElementById("refreshPlayersBtn");
 const userId = document.getElementById("user-id");
-const btnListRooms = document.getElementById("btnListRooms");
 
 socketEvents.connect();
 socketEvents.ping();
@@ -24,7 +23,7 @@ refreshPlayersBtn.onclick = () => socketEvents.listUsers();
 setInterval(() => socketEvents.listUsers(), 10000);
 userId.textContent = username;
 
-btnListRooms.onclick = () => listarSalas();
+
 
 function listarSalas() {
   socketEvents.listRooms();

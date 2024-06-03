@@ -84,14 +84,20 @@ class App {
           this.userManager.getUserByUsername(username)
         );
 
-        socket.on("QUIT_GAME_ROOM", (data,quit) => {
-          const room = this.rooms[data.room]
-          const players = Object.values(room).filter(player => player.username)
-          console.log(players)
-          //socket.leave(room);
-          this.userManager.connections[username].room = null;
-          quit();
-          console.log("Saiu da sala");
+        socket.on("QUIT_GAME_ROOM", (data, quit) => {
+          const room = this.rooms[data.room];
+          if (room) {
+            
+            const players = Object.values(room).filter(
+              (player) => player.username
+            );
+            players[0].room = null
+            players[1].room = null
+            delete this.rooms[data.room]
+            // this.userManager.connections[username].room = null;
+            quit();
+            console.log("Saiu da sala");
+          }
         });
 
         socket.on("ping", () => {

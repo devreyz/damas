@@ -25,22 +25,29 @@ const white = "#FFFFFF"; // Branco
 const brown = "#8B4513"; // Marrom
 const gray = "#D3D3D3"; // Cinza
 const orangeLighter = "#FFD700"; // Laranja mais claro
-const dark = "#123400"
-const light = "#d3d3d3"
+const dark = "#123400";
+const light = "#d3d3d3";
 const whiteOff = "#FFFFF0"; // Branco off-white
 const kingDark = "#FFA555";
+
+const boardContainer = document.getElementById("board-container");
+const statusSection = document.getElementById("status-section");
+
+let spaceY =
+  window.innerWidth > window.innerHeight ? statusSection.clientHeight : 0;
+  
 
 // Tamanho do tabuleiro
 let boardSize =
   window.innerWidth > window.innerHeight
     ? window.innerHeight
     : window.innerWidth;
+boardSize -= spaceY;
 let squareSize = boardSize / 10;
 
-let canvasSquare =
-  window.innerWidth > window.innerHeight
-    ? window.innerHeight
-    : window.innerWidth;
+let canvasSquare = boardSize;
+boardContainer.style.width = boardSize;
+boardContainer.style.height = boardSize;
 
 // Estado inicial do jogo
 let gameState = [

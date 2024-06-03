@@ -1,62 +1,61 @@
 <!doctype html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0" />
-    <title>Partida entre</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn-uicons.flaticon.com/2.3.0/uicons-bold-rounded/css/uicons-bold-rounded.css" />
 
-    <link
-      rel="stylesheet"
-      href="/assets/css/styles.css" />
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Partida entre</title>
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.3.0/uicons-bold-rounded/css/uicons-bold-rounded.css" />
 
-  <body class="fixed max-h-screen">
-    <div
-      id="notification-container"
-      class="fixed top-0 left-0 m-4 z-50"></div>
-    <div
-      class="fixed flex gap-3 items-center top-0 left-0 text-lg z-40 bg-slate-900 w-full px-3 justify-end py-2">
-      <button
-        class="text-white"
-        id="quitButton">
-        <i class="fi fi-br-sign-out-alt"></i>
-      </button>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+</head>
 
-      <span
-        id="turnView"
-        class="bg-orange-400 animate-bounce rounded-full w-6 h-6">
-      </span>
+<body class="fixed flex flex-col  max-h-screen">
+  <div id="notification-container" class="fixed top-0 left-0 m-4 z-50"></div>
 
-      <button
-        id="toggleTurn"
-        class="text-white px-4">
-        <i class="fi fi-br-exchange"></i>
-      </button>
-
-      <span
-        class="text-white"
-        id="ping"
-        ><i class="fi fi-br-menu-dots"></i
-      ></span>
-      <div
-        id="show-connect-socket"
-        class="">
-        <i class="fi fi-br-loading text-amber-400 text-lg"></i>
+  <div id="status-section"
+    class="sticky flex gap-3 items-center top-0 left-0 text-lg z-40 bg-slate-900 w-screen px-3 justify-between py-2">
+    <div class="text-slate-900 flex relative">
+      <div class="playername flex">
+        <div class="bg-white w-fit min-w-20 rounded-full px-2 opacity-50">You</div>
+        <div>a</div>
+      </div>
+      <div class="playername flex">
+        <div>l</div>
+        <div class="bg-orange-400 w-fit min-w-20 rounded-full px-2">Enimie</div>
       </div>
     </div>
 
-    <script src="/js/utils/p5.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/damas/global.js"></script>
-    <script src="/js/damas/render.js"></script>
-    <script
-      src="/js/damas/Game.js"
-      type="module"></script>
-    <!-- <script src="/js/damas/testes.js" type="module"></script> -->
-  </body>
+    <div class="flex gap-3">
+
+      <button class="text-white" id="quitButton">
+        <i class="fi fi-br-sign-out-alt"></i>
+      </button>
+
+      <span id="turnView" class="bg-orange-400 animate-bounce rounded-full w-6 h-6">
+      </span>
+
+      <button id="toggleTurn" class="text-white px-4">
+        <i class="fi fi-br-exchange"></i>
+      </button>
+
+      <span class="text-white" id="ping"><i class="fi fi-br-menu-dots"></i></span>
+      <div id="show-connect-socket" class="">
+        <i class="fi fi-br-loading text-amber-400 text-lg"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="w-full h-full flex-1 flex justify-center items-center">
+    <div id="board-container"></div>
+  </div>
+
+  <script src="/js/utils/p5.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/damas/global.js"></script>
+  <script src="/js/damas/render.js"></script>
+  <script src="/js/damas/Game.js" type="module"></script>
+  <!-- <script src="/js/damas/testes.js" type="module"></script> -->
+</body>
+
 </html>

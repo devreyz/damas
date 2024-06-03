@@ -48,7 +48,7 @@ export class SocketEvents {
       EventEmitter.on("QUIT_GAME_ROOM", data => {
         console.log(data)
         this.io.emit("QUIT_GAME_ROOM", data,()=>{
-          //window.location.href = "/home"
+          window.location.href = "/home"
         });
       });
 
@@ -85,6 +85,10 @@ export class SocketEvents {
   }
   joinGameRoom(roomName) {
     this.io.emit("joinGameRoom", roomName, room => {
+      if (!room) {
+        window.location.href = "/home"
+        return
+      }
       EventEmitter.emit("ON_ROOM", room)
       
     });
