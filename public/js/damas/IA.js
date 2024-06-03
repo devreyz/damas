@@ -29,7 +29,7 @@ export function IAFactory() {
           }, OK! `,
           color: ia.pieceColor
         });
-      }, 2000);
+      }, 3000);
     };
     ia.processMove = function () {
       if (game.state.turn === ia.pieceColor) {

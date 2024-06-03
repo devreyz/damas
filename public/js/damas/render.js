@@ -92,7 +92,16 @@ function mousePressed(event) {
     
     let col = floor(mouseX / squareSize);
     let row = floor(mouseY / squareSize);
-  game.boardPressed({ col, row }, false);
+    
+    const data = {
+      room:   roomId,
+      position: { col, row },
+      player: {
+        color: game.state.playerColor
+      }
+      
+    }
+  game.boardPressed(data, false);
     event.preventDefault();
   }
 }

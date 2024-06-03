@@ -101,32 +101,25 @@ export const GameStateFactory = (function () {
           this.selectedPiece = null;
         }
       },
-      toggleSelectedPiece(piece, state, io) {
+      toggleSelectedPiece(piece, state, data) {
         if (
-          this.turn === this.playerColor &&
-          piece.getInfo("color") === this.playerColor || io
+          this.turn === data.player.color &&
+          piece.getInfo("color") === data.player.color
         ) {
           if (state.selectedPiece === null) {
             this.setSelectedPiece(piece);
-            //state.selectedPiece = piece;
-            //piece.toggleSelect();
+          
           } else {
             if (state.selectedPiece === piece) {
               this.removeSelectedPiece();
-              // state.selectedPiece.toggleSelect();
-              //state.selectedPiece = null;
             } else {
               this.removeSelectedPiece();
               this.setSelectedPiece(piece);
-              //state.selectedPiece.toggleSelect();
-              //piece.toggleSelect();
-              //state.selectedPiece = piece;
             }
           }
           
         } else {
-          //console.log(piece.getInfo());
-          if (piece.getInfo("color") === this.playerColor) {
+          if (piece.getInfo("color") === data.player.color) {
             EventEmitter.emit("IS_NOT_YOUR_TURN", {
               msg: message("notYourTurn")
             });
@@ -142,16 +135,14 @@ export const GameStateFactory = (function () {
         return state[row][col];
       },
       capturePiece(row, col) {
-        //  console.log(row,col)
         this.state[row][col] = null;
         gameState[row][col] = null;
-        //console.log(this.allPieces);
       },
       // Método para mover uma peça de uma posição para outra
       movePiece(state, newRow, newCol) {
         const { row, column } = this.selectedPiece.getInfo("position");
         const moves = this.selectedPiece.getInfo("possibleMovements");
-        //console.log(moves[0].targetPos)
+      
         const move = moves.find(
           item => item.targetPos.x === newCol && item.targetPos.y === newRow
         );
@@ -162,7 +153,6 @@ export const GameStateFactory = (function () {
             item => item.targetPos.x === newCol && item.targetPos.y === newRow
           );
         if ((verifyTurn && verifyMoves) || (true && verifyMoves)  || (this.iaTurn && verifyMoves)) {
-          const test = state.state[row][column];
           this.selectedPiece.move(newRow, newCol);
           this.state[newRow][newCol] = state.state[row][column];
           this.state[row][column] = null;
@@ -171,7 +161,6 @@ export const GameStateFactory = (function () {
           if (move.isCapture) {
             this.capturePiece(move.capturePos.y, move.capturePos.x);
 
-            //throw new Error()
           } else {
             this.toggleTurn();
             
@@ -180,7 +169,7 @@ export const GameStateFactory = (function () {
           if (this.quantityPieces.white === 0) alert("Vitoria black");
           if (this.quantityPieces.black === 0) alert("Vitoria white");
           if (this.allPossibleMovesInTurn.length === 0) {
-            //console.log("Sem jogadas");
+            
             this.toggleTurn();
           }
 

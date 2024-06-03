@@ -46,8 +46,9 @@ export class SocketEvents {
       
       
       EventEmitter.on("QUIT_GAME_ROOM", data => {
-        this.io.emit("QUIT_GAME_ROOM", ()=>{
-          window.location.href = "/home"
+        console.log(data)
+        this.io.emit("QUIT_GAME_ROOM", data,()=>{
+          //window.location.href = "/home"
         });
       });
 
@@ -60,7 +61,7 @@ export class SocketEvents {
       
       this.io.on("IO_BOARD_ON_PRESSED", (data, callback) => {
         
-        EventEmitter.emit("IO_BOARD_ON_PRESSED", data.position)
+        EventEmitter.emit("IO_BOARD_ON_PRESSED", data)
         //console.log(data)
         callback(true)
       })
@@ -83,9 +84,9 @@ export class SocketEvents {
     this.io.emit("listRooms", rooms => {});
   }
   joinGameRoom(roomName) {
-    this.io.emit("joinGameRoom", roomName, data => {
-      EventEmitter.emit("ON_ROOM", data)
-      //console.log(data[username])
+    this.io.emit("joinGameRoom", roomName, room => {
+      EventEmitter.emit("ON_ROOM", room)
+      
     });
   }
   thisPlayerInARoom(){

@@ -84,7 +84,10 @@ class App {
           this.userManager.getUserByUsername(username)
         );
 
-        socket.on("QUIT_GAME_ROOM", quit => {
+        socket.on("QUIT_GAME_ROOM", (data,quit) => {
+          const room = this.rooms[data.room]
+          const players = Object.values(room).filter(player => player.username)
+          console.log(players)
           //socket.leave(room);
           this.userManager.connections[username].room = null;
           quit();
@@ -107,7 +110,7 @@ class App {
         });
 
         socket.on("joinGameRoom", (roomName, callback) => {
-          console.log("Entrou na sala: ", roomName);
+          //console.log("Entrou na sala: ", roomName);
           socket.join(roomName);
           //console.log(`User joined room  ${roomName}`);
           callback(this.rooms[roomName]);
@@ -136,7 +139,7 @@ class App {
             });
         });
         socket.on("TOGGLE_TURN", (data, callback) => {
-          console.log("data");
+          //console.log("data");
           socket
             .to(data.room)
             .timeout(5000)
@@ -178,7 +181,7 @@ class App {
                     playerFrom.color = playerColor === 1 ? "black" : "white";
                     playerTo.color = playerColor === 1 ? "white" : "black";
 
-                    console.log(playerColor);
+                    //console.log(playerColor);
                     this.rooms[roomName] = {
                       [usernameFrom]: playerFrom,
                       [usernameTo]: playerTo,
@@ -241,7 +244,7 @@ class App {
                         ["w", null, "w", null, "w", null, "w", null, "w", null]
                       ]
                     };
-                    console.log(this.rooms);
+                    //console.log(this.rooms);
                   } else {
                     callback(false);
                   }

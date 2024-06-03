@@ -45,8 +45,9 @@ EventEmitter.on("ON_ROOM", data => {
   game.board = CheckersBoardFactory.getInstance(game.state);
   game.state.setStateOptions(stateOptions);
   game.state.findAllPossiblesPiecesMoves();
-  game.boardPressed = (args, io) => {
-    const { col, row } = args;
+  game.boardPressed = (data, io) => {
+    const { col, row } = data.position;
+    console.log(data)
 
     if (col >= 0 && col < 10 && row >= 0 && row < 10) {
       let item = game.state.getPiece(row, col);
@@ -56,28 +57,25 @@ EventEmitter.on("ON_ROOM", data => {
         //alert()
         EventEmitter.emit(
           "BOARD_ON_PRESSED",
-          { room: roomId, position: { column: col, row: row } },
+          data,
           res => {
             console.log(res);
           }
         );
       }
       if (item !== null) {
-        game.state.toggleSelectedPiece(item, game.state, io);
+        game.state.toggleSelectedPiece(item, game.state, data);
       } else if (game.state.selectedPiece) {
         game.state.movePiece(game.state, row, col);
       }
     }
   };
 
-  EventEmitter.on("IO_BOARD_ON_PRESSED", position => {
+  EventEmitter.on("IO_BOARD_ON_PRESSED", data => {
     //alert('recebi');
-    position = {
-      row: position.row,
-      col: position.column
-    };
-    console.log(position);
-    game.boardPressed(position, true);
+    
+   console.log("position: ", data);
+    game.boardPressed(data, true);
   });
 
   document.getElementById("turnView").classList =
@@ -87,7 +85,7 @@ EventEmitter.on("ON_ROOM", data => {
 
   btnToggleTurn.onmousedown = event => game.state.toggleTurn();
   quitButton.onclick = ev => {
-    EventEmitter.emit("QUIT_GAME_ROOM");
+    EventEmitter.emit("QUIT_GAME_ROOM", {room: roomId});
   };
 
   const IA = IAFactory();
@@ -95,15 +93,21 @@ EventEmitter.on("ON_ROOM", data => {
   const uai = IA.createIA("uai", {
     gameState: game.state,
     pieceColor: "white",
-    qi: 800
+    qi: 100
   });
 
-  // uai.on();
-  // uai.processMove({turn: game.state.turn, action: "INIT"})
+  //uai.on();
+ // uai.processMove({turn: game.state.turn, action: "INIT"})
 
   const iai = IA.createIA("iai", {
     gameState: game.state,
     pieceColor: "black",
-    qi: 800
+    qi: 100
   });
+  
+  
+
+
+ // iai.on();
+ // iai.processMove({turn: game.state.turn, action: "INIT"})
 });

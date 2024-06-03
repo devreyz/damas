@@ -3,7 +3,7 @@ export function PieceFactory() {
   // Function to create a new piece
   function createPiece(color, column, row, isKing, state) {
     return {
-      id: crypto.randomUUID(),
+      //id: crypto.randomUUID(),
       piece: {
         color: String(color), // 'white' or 'black'
         king: Boolean(isKing), // if it is a king piece or not
@@ -17,18 +17,9 @@ export function PieceFactory() {
           row: row,
           column: column
         },
-        possibleMovements: [
-          /*
-          {
-            moveTipe: SIMPLE || KING || CAPTURE || KING_CAPTURE,
-            lastPos: {x: 0, y:0},
-            nextPos: {x: 1, y:1},
-            capturePiece: Piece || null
-          }
-          */
-        ],
+        possibleMovements: [],
         moveDirection: color === "black" ? 1 : -1
-        // Other attributes can be added as needed
+      
       },
 
       // Method to move the piece
