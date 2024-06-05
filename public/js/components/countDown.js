@@ -5,7 +5,7 @@ export function startCountdown(duration, link) {
     "countdown-container fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white border-2 border-gray-300 rounded-lg p-6 text-center shadow-lg";
   countdownContainer.innerHTML = `
         <h2 class="text-2xl font-semibold mb-4">Aguardando início da partida...</h2>
-        <div id="countdown" class="text-4xl font-bold text-red-500">00:00:000</div>
+        <div id="countdown" class="text-4xl font-bold text-indigo-500">00:00:000</div>
     `;
 
   // Adiciona o elemento ao body do documento

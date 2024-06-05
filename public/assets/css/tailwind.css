@@ -17,7 +17,7 @@ body {
   @apply text-orange-400;
 }
 #ping {
-  @apply transition-colors duration-150 w-12;
+  @apply transition-colors duration-150 w-12 text-end;
 }
 .ping-excellent {
   @apply text-cyan-500;
@@ -66,5 +66,5 @@ body {
   @apply  relative 
 }
 canvas{
-  @apply  w-full h-full mx-auto p-4 border  bg-amber-950
+  @apply  w-full h-full mx-auto p-4 border  bg-gray-700
 }

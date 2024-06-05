@@ -23,8 +23,6 @@ refreshPlayersBtn.onclick = () => socketEvents.listUsers();
 setInterval(() => socketEvents.listUsers(), 10000);
 userId.textContent = username;
 
-
-
 function listarSalas() {
   socketEvents.listRooms();
 }
@@ -36,14 +34,15 @@ function handlePageFocus() {
 
 // Adiciona um ouvinte de evento para quando a página volta ao foco
 document.addEventListener("visibilitychange", () => {
+  
   if (!document.hidden) {
     // Verifica se a página não está oculta
     handlePageFocus();
+
   }
+    socketEvents.thisPlayerInARoom();
 });
 
-
-
 EventEmitter.on("PLAYER_IS_GAMMING", () => {
-  alert('Jogando')
-})
+  //alert('Jogando')
+});

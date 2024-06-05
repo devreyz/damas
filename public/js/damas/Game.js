@@ -29,6 +29,11 @@ EventEmitter.on("IA_MESSAGE", data => {
   showNotification(data);
 });
 
+
+EventEmitter.on("TOGGLE_TURN", turn => {
+  
+});
+
 EventEmitter.on("IO_SELECT_PIECE", data => {
   const piece = game.state.getPiece(data.position.row, data.position.column);
   piece.piece.isSelected = true;

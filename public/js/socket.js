@@ -62,8 +62,8 @@ export class SocketEvents {
       this.io.on("IO_BOARD_ON_PRESSED", (data, callback) => {
         
         EventEmitter.emit("IO_BOARD_ON_PRESSED", data)
-        //console.log(data)
-        callback(true)
+        
+        callback(gameState)
       })
       
 
@@ -89,6 +89,7 @@ export class SocketEvents {
         window.location.href = "/home"
         return
       }
+      gameState = room.state
       EventEmitter.emit("ON_ROOM", room)
       
     });
@@ -178,7 +179,8 @@ export class SocketEvents {
       "justify-center",
       "gap-3",
       "px-3",
-      "text-xl"
+      "text-xl",
+      "text-slate-800"
     );
     const removeButton = document.createElement("button");
     removeButton.innerHTML = `

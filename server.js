@@ -87,13 +87,12 @@ class App {
         socket.on("QUIT_GAME_ROOM", (data, quit) => {
           const room = this.rooms[data.room];
           if (room) {
-            
             const players = Object.values(room).filter(
-              (player) => player.username
+              player => player.username
             );
-            players[0].room = null
-            players[1].room = null
-            delete this.rooms[data.room]
+            players[0].room = null;
+            players[1].room = null;
+            delete this.rooms[data.room];
             // this.userManager.connections[username].room = null;
             quit();
             console.log("Saiu da sala");
@@ -132,15 +131,17 @@ class App {
         socket.on("enchangeMoveData", () => {});
 
         socket.on("BOARD_ON_PRESSED", (data, callback) => {
-          //console.log(data);
+          const room = this.rooms[data.room];
+          //console.log(room.state)
           socket
             .to(data.room)
             .timeout(5000)
-            .emit("IO_BOARD_ON_PRESSED", data, (err, res) => {
+            .emit("IO_BOARD_ON_PRESSED", data, (err, state) => {
               if (err) {
                 callback(false);
               } else {
-                callback(res);
+                room.state = state[0]
+                
               }
             });
         });

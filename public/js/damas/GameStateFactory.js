@@ -78,6 +78,7 @@ export const GameStateFactory = (function () {
             : "bg-white animate-bounce rounded-full w-6 h-6";
         this.findAllPossiblesPiecesMoves();
         this.removeSelectedPiece();
+        EventEmitter.emit("TOGGLE_TURN", this.turn)
       },
       setStateOptions(options) {
         this.turn = options.turn;

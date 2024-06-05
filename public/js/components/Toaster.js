@@ -1,5 +1,5 @@
 import EventEmitter from "../utils/EventEmitter.js";
-function JoinRequestNotification(callback) {
+function JoinRequestNotification(data, callback) {
   const toastElem = document.createElement("li");
   const timeRemoveClass = setTimeout(
     () => toastElem.classList.remove("animate-swipUp"),
@@ -16,12 +16,12 @@ function JoinRequestNotification(callback) {
     });
   };
   toastElem.className =
-    "animate-swipUp absolute bottom-0 w-80 bg-white shadow-lg rounded-lg overflow-hidden border border-stone-900";
+    "animate-swipUp absolute bottom-0 w-80 bg-slate-100 shadow-lg rounded-lg overflow-hidden border-2 border-indigo-900";
   toastElem.innerHTML = `
-    <div class="px-4 py-2 flex justify-between items-center border-b border-gray-200">
-      <h2 class="text-lg text-stone-600 font-semibold">Aceita o Desafio?</h2>
+    <div class="px-4 py-2 flex justify-between items-center border-b border-gray-500/60">
+      <h2 class="text-lg text-stone-800 font-semibold">Aceita o Desafio?</h2>
       <button
-        class="closeButton text-gray-500 hover:text-gray-700 focus:outline-none">
+        class="closeButton text-red-500 hover:text-red-700 focus:outline-none">
         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd"
             d="M5.293 5.293a1 1 0 011.414 0L10 8.586l3.293-3.293a1 1 0 111.414 1.414L11.414 10l3.293 3.293a1 1 0 01-1.414 1.414L10 11.414l-3.293 3.293a1 1 0 01-1.414-1.414L8.586 10 5.293 6.707a1 1 0 010-1.414z"
@@ -33,8 +33,8 @@ function JoinRequestNotification(callback) {
       <p class="text-sm text-gray-600"><span class="font-semibold text-stone-950">player1</span> te convidou para uma
         partida</p>
     </div>
-    <div class="px-4 py-2 gap-4 bg-stone-100 flex justify-end"><button
-        class="acceptButton px-4 flex-1 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none">Aceitar</button><button
+    <div class="px-4 py-2 gap-4 bg-white flex justify-end"><button
+        class="acceptButton px-4 flex-1 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600 focus:outline-none">Aceitar</button><button
         class="declineButton px-4 flex-1 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none">Recusar</button>
     </div>`;
 
@@ -70,7 +70,7 @@ export function addToaster(data, callback) {
     elem.classList.remove("animate-swipUp");
   });
 
-  const li = JoinRequestNotification(callback);
+  const li = JoinRequestNotification(data, callback);
 
   // Obter o primeiro filho existente do elemento pai
   const firstChild = toaster.firstChild;
