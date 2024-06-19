@@ -62,7 +62,7 @@ export const GameStateFactory = (function () {
       selectedPiece: null,
       quantityPieces: {
         black: 0,
-        white: 0
+        white: 0,
       },
       getState() {
         return state;
@@ -70,7 +70,7 @@ export const GameStateFactory = (function () {
       toggleTurn() {
         this.turn = this.turn === "black" ? "white" : "black";
         this.iaTurn = !this.iaTurn;
-        
+
         //this.playerColor = this.playerColor === "black" ? "white" : "black"; //REMOVER ESTA LINHA DEPOIS
         document.getElementById("turnView").classList =
           this.turn === "black"
@@ -78,7 +78,7 @@ export const GameStateFactory = (function () {
             : "bg-white animate-bounce rounded-full w-6 h-6";
         this.findAllPossiblesPiecesMoves();
         this.removeSelectedPiece();
-        EventEmitter.emit("TOGGLE_TURN", this.turn)
+        EventEmitter.emit("TOGGLE_TURN", this.turn);
       },
       setStateOptions(options) {
         this.turn = options.turn;
@@ -92,9 +92,8 @@ export const GameStateFactory = (function () {
 
         const data = {
           room: roomId,
-          position: position
+          position: position,
         };
-        
       },
       removeSelectedPiece() {
         if (this.selectedPiece) {
@@ -109,7 +108,6 @@ export const GameStateFactory = (function () {
         ) {
           if (state.selectedPiece === null) {
             this.setSelectedPiece(piece);
-          
           } else {
             if (state.selectedPiece === piece) {
               this.removeSelectedPiece();
@@ -118,15 +116,14 @@ export const GameStateFactory = (function () {
               this.setSelectedPiece(piece);
             }
           }
-          
         } else {
           if (piece.getInfo("color") === data.player.color) {
             EventEmitter.emit("IS_NOT_YOUR_TURN", {
-              msg: message("notYourTurn")
+              msg: message("notYourTurn"),
             });
           } else {
             EventEmitter.emit("IS_NOT_YOUR_PIECE", {
-              msg: "Está peça pertence ao outro jogador!"
+              msg: "Está peça pertence ao outro jogador!",
             });
           }
         }
@@ -143,17 +140,22 @@ export const GameStateFactory = (function () {
       movePiece(state, newRow, newCol) {
         const { row, column } = this.selectedPiece.getInfo("position");
         const moves = this.selectedPiece.getInfo("possibleMovements");
-      
+
         const move = moves.find(
-          item => item.targetPos.x === newCol && item.targetPos.y === newRow
+          (item) => item.targetPos.x === newCol && item.targetPos.y === newRow
         );
+        console.log();
         const verifyTurn = this.turn === this.playerColor;
         const verifyMoves =
           moves &&
           moves.some(
-            item => item.targetPos.x === newCol && item.targetPos.y === newRow
+            (item) => item.targetPos.x === newCol && item.targetPos.y === newRow
           );
-        if ((verifyTurn && verifyMoves) || (true && verifyMoves)  || (this.iaTurn && verifyMoves)) {
+        if (
+          (verifyTurn && verifyMoves) ||
+          (true && verifyMoves) ||
+          (this.iaTurn && verifyMoves)
+        ) {
           this.selectedPiece.move(newRow, newCol);
           this.state[newRow][newCol] = state.state[row][column];
           this.state[row][column] = null;
@@ -161,25 +163,22 @@ export const GameStateFactory = (function () {
           gameState[row][column] = null;
           if (move.isCapture) {
             this.capturePiece(move.capturePos.y, move.capturePos.x);
-
           } else {
             this.toggleTurn();
-            
           }
           this.findAllPossiblesPiecesMoves();
           if (this.quantityPieces.white === 0) alert("Vitoria black");
           if (this.quantityPieces.black === 0) alert("Vitoria white");
           if (this.allPossibleMovesInTurn.length === 0) {
-            
             this.toggleTurn();
           }
 
           EventEmitter.emit("MOVE_MADE", {
-            gameState: gameState
+            gameState: gameState,
           });
         } else {
           EventEmitter.emit("INVALID_MOVE", {
-            msg: "Jogada inválida!"
+            msg: "Jogada inválida!",
           });
         }
       },
@@ -189,34 +188,45 @@ export const GameStateFactory = (function () {
           state[row][col].king = true;
         }
       },
-      findAllPossiblesPiecesMoves() {
+      findAllPossiblesPiecesMoves(singlePiece) {
         // Método para encontrar todas as possíveis posições de movimento de uma peça
 
         game.state.allPossibleMovesInTurn = [];
         this.quantityPieces = {
           black: 0,
-          white: 0
+          white: 0,
         };
 
-        this.state.forEach((row, y) => {
-          row.forEach((piece, x) => {
-            if (piece) {
-              const pieceColor = piece.getInfo("color");
-              this.quantityPieces[pieceColor]++;
-              if (pieceColor === this.turn) {
-                const color = piece.getInfo("color")[0];
-                const king = piece.getInfo("king");
-                const moveDirection = piece.getInfo("moveDirection");
-                piece.mapAllMoves(gameState, x, y, {
-                  color,
-                  king,
-                  moveDirection
-                });
+        const getPosForPiece = (piece, x, y,) => {
+          const pieceColor = piece.getInfo("color");
+          this.quantityPieces[pieceColor]++;
+          if (pieceColor === this.turn) {
+            const color = piece.getInfo("color")[0];
+            const king = piece.getInfo("king");
+            const moveDirection = piece.getInfo("moveDirection");
+            piece.mapAllMoves(gameState, x, y, {
+              color,
+              king,
+              moveDirection,
+            });
+          }
+        }
+
+        if (singlePiece) {
+          const position = singlePiece.getInfo("position")
+          const x = position.column
+          const y = position.row
+           getPosForPiece(singlePiece, x, y);
+        } else {
+          this.state.forEach((row, y) => {
+            row.forEach((piece, x) => {
+              if (piece) {
+                getPosForPiece(piece, x, y)
               }
-            }
+            });
           });
-        });
-      }
+        }
+      },
     };
   }
 
@@ -226,6 +236,6 @@ export const GameStateFactory = (function () {
         instance = createInstance(state);
       }
       return instance;
-    }
+    },
   };
 })();

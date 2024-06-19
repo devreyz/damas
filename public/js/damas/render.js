@@ -64,7 +64,7 @@ function mousePressed(event) {
   if (event.target === canvas.elt) {
     let col = floor(mouseX / squareSize);
     let row = floor(mouseY / squareSize);
-console.log(gameState)
+
     const data = {
       room: roomId,
       state: gameState,
